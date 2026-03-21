@@ -17,9 +17,25 @@ class TeacherAttendanceClass {
 
 abstract class TeacherAttendanceRepository {
   Future<List<TeacherAttendanceClass>> today({required String schoolId});
+
+  /// Idempotent upsert for one student/day. [status]: `present` | `absent` | `excused`.
+  Future<void> upsertMark({
+    required String schoolId,
+    required String studentId,
+    required DateTime date,
+    required String status,
+  });
 }
 
 class StubTeacherAttendanceRepository implements TeacherAttendanceRepository {
+  @override
+  Future<void> upsertMark({
+    required String schoolId,
+    required String studentId,
+    required DateTime date,
+    required String status,
+  }) async {}
+
   @override
   Future<List<TeacherAttendanceClass>> today({required String schoolId}) async {
     return const [
@@ -45,12 +61,38 @@ class SupabaseTeacherAttendanceRepository implements TeacherAttendanceRepository
 
   final SupabaseClient _client;
 
+  static String _pgDate(DateTime date) {
+    final local = DateTime(date.year, date.month, date.day);
+    final y = local.year.toString().padLeft(4, '0');
+    final m = local.month.toString().padLeft(2, '0');
+    final d = local.day.toString().padLeft(2, '0');
+    return '$y-$m-$d';
+  }
+
   static String _todayLocalDateString() {
     final n = DateTime.now();
     final y = n.year.toString().padLeft(4, '0');
     final m = n.month.toString().padLeft(2, '0');
     final d = n.day.toString().padLeft(2, '0');
     return '$y-$m-$d';
+  }
+
+  @override
+  Future<void> upsertMark({
+    required String schoolId,
+    required String studentId,
+    required DateTime date,
+    required String status,
+  }) async {
+    await _client.rpc(
+      'upsert_attendance_mark',
+      params: <String, dynamic>{
+        'school_id': schoolId,
+        'student_id': studentId,
+        'p_date': _pgDate(date),
+        'p_status': status,
+      },
+    );
   }
 
   @override

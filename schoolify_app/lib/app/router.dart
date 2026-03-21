@@ -22,6 +22,7 @@ import 'package:schoolify_app/features/parent/presentation/parent_fees_screen.da
 import 'package:schoolify_app/features/parent/presentation/parent_grades_screen.dart';
 import 'package:schoolify_app/features/parent/presentation/parent_shell.dart';
 import 'package:schoolify_app/features/teacher/presentation/teacher_announcements_screen.dart';
+import 'package:schoolify_app/features/teacher/presentation/mark_attendance_screen.dart';
 import 'package:schoolify_app/features/teacher/presentation/teacher_attendance_screen.dart';
 import 'package:schoolify_app/features/teacher/presentation/teacher_dashboard_screen.dart';
 import 'package:schoolify_app/features/teacher/presentation/teacher_grades_screen.dart';
@@ -184,6 +185,20 @@ final routerProvider = Provider<GoRouter>((ref) {
                     path: 'attendance',
                     builder: (context, state) =>
                         const TeacherAttendanceScreen(),
+                    routes: [
+                      GoRoute(
+                        path: 'mark/:classId',
+                        builder: (context, state) {
+                          final classId = state.pathParameters['classId']!;
+                          final label =
+                              state.uri.queryParameters['label'] ?? 'Attendance';
+                          return MarkAttendanceScreen(
+                            classId: classId,
+                            classLabel: label,
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
