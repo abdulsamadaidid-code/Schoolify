@@ -9,7 +9,9 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepository();
 });
 
-/// Supabase-backed session stream only (always unauthenticated when env is missing).
+/// Supabase-backed session stream: after each auth event, [AuthRepository] upserts
+/// `profiles`, loads `get_my_school_id`, then `school_members` for role + tenant.
+/// When env is missing, yields unauthenticated.
 final authSessionStreamProvider = StreamProvider<AuthSession>((ref) {
   return ref.watch(authRepositoryProvider).watchAuthSession();
 });

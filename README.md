@@ -37,6 +37,26 @@ flutter run \
 
 If omitted, the app runs in **offline / no-backend** mode: auth stream stays signed-out; login shows a clear message.
 
+## Running with Supabase
+
+1. **Apply the schema.** In the [Supabase Dashboard](https://supabase.com/dashboard) → **SQL Editor**, paste and execute the contents of [`../supabase/migrations/001_baseline.sql`](../supabase/migrations/001_baseline.sql) (repository root).
+
+2. **Run the app** with your project URL and **anon** key:
+
+```bash
+flutter run \
+  --dart-define=SUPABASE_URL=https://vmkibeakzshjchhsqokz.supabase.co \
+  --dart-define=SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZta2liZWFrenNoamNoaHNxb2t6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwOTg4MDksImV4cCI6MjA4OTY3NDgwOX0.ud8d4HjQTSLTebtiuw_iWkB1WmmF0qHAHRI7nswhWHA
+```
+
+3. **First-time setup:** Create a user via Supabase Auth (Dashboard → **Authentication**, or the app’s sign-up). Then in **SQL Editor**, bootstrap the first school and admin membership:
+
+```sql
+select create_school_with_admin('School Name');
+```
+
+Replace `'School Name'` with your school’s display name.
+
 ## Mobile MVP (Parent / Teacher)
 
 - **Entry:** Without Supabase, `/` and `/login` use `RoleSelectScreen` (demo Parent / Teacher). With Supabase, use `LoginPage` and membership/`user_metadata` for role (see `AuthRepository`).

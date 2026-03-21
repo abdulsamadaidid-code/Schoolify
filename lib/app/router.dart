@@ -11,7 +11,7 @@ import 'package:schoolify_app/core/config/env.dart';
 import 'package:schoolify_app/features/auth/presentation/login_page.dart';
 import 'package:schoolify_app/features/auth/presentation/role_select_screen.dart';
 import 'package:schoolify_app/features/home/presentation/pending_role_page.dart';
-import 'package:schoolify_app/features/home/presentation/role_home_page.dart';
+import 'package:schoolify_app/features/admin/presentation/admin_dashboard_screen.dart';
 import 'package:schoolify_app/features/home/presentation/splash_page.dart';
 import 'package:schoolify_app/features/parent/presentation/parent_announcements_screen.dart';
 import 'package:schoolify_app/features/parent/presentation/parent_attendance_screen.dart';
@@ -54,7 +54,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.admin,
         builder: (context, state) => const AppShell(
           role: UserRole.admin,
-          child: RoleHomePage(role: UserRole.admin),
+          child: AdminDashboardScreen(),
         ),
       ),
       GoRoute(

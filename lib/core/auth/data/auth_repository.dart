@@ -23,10 +23,7 @@ class AuthRepository {
       if (session == null) {
         return AuthSession.unauthenticated;
       }
-      final user = session.user;
-      final role = _roleFromUser(user);
-      final schoolId = _schoolIdFromUser(user);
-      return AuthSession(userId: user.id, role: role, schoolId: schoolId);
+      return _authSessionFromBackend(session.user);
     });
   }
 
@@ -48,17 +45,48 @@ class AuthRepository {
     await Supabase.instance.client.auth.signOut();
   }
 
-  String? _schoolIdFromUser(User user) {
-    final raw = user.userMetadata?['school_id'];
-    if (raw is String && raw.isNotEmpty) return raw;
-    return null;
+  /// Ensures a profile row, then loads tenant role + school from RPC + `school_members`.
+  ///
+  /// If [get_my_school_id] is null (no membership), [AuthSession.role] and
+  /// [AuthSession.schoolId] are both null — [PendingRolePage] handles that.
+  Future<AuthSession> _authSessionFromBackend(User user) async {
+    final client = Supabase.instance.client;
+    await client.from('profiles').upsert({
+      'id': user.id,
+      'display_name': user.email ?? '',
+    });
+
+    final schoolIdRaw = await client.rpc<dynamic>('get_my_school_id');
+    final schoolId = _uuidStringOrNull(schoolIdRaw);
+    if (schoolId == null) {
+      return AuthSession(userId: user.id, role: null, schoolId: null);
+    }
+
+    final row = await client
+        .from('school_members')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('school_id', schoolId)
+        .maybeSingle();
+
+    final roleRaw = row?['role'];
+    final role = roleRaw is String ? _roleFromDbString(roleRaw) : null;
+
+    return AuthSession(
+      userId: user.id,
+      role: role,
+      schoolId: schoolId,
+    );
   }
 
-  /// Temporary: reads `user_metadata['role']` as `admin` | `teacher` | `parent`.
-  /// Replace with DB-backed membership when available.
-  UserRole? _roleFromUser(User user) {
-    final raw = user.userMetadata?['role'];
-    if (raw is! String) return null;
+  String? _uuidStringOrNull(dynamic value) {
+    if (value == null) return null;
+    final s = value is String ? value : value.toString();
+    if (s.isEmpty) return null;
+    return s;
+  }
+
+  UserRole? _roleFromDbString(String raw) {
     switch (raw.toLowerCase()) {
       case 'admin':
         return UserRole.admin;
@@ -67,7 +95,7 @@ class AuthRepository {
       case 'parent':
         return UserRole.parent;
       default:
-        debugPrint('Unknown role in user_metadata: $raw');
+        debugPrint('Unknown role in school_members: $raw');
         return null;
     }
   }
