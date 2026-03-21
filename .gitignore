@@ -1,15 +1,20 @@
-# Dart / Flutter
-.dart_tool/
-.packages
-build/
-*.iml
-.idea/
-*.lock
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
 
-# Env (never commit secrets)
-.env
-.env.*
+# Stitch UI design exports (binary/reference only)
+Stitch UI/
 
-# Platform (after `flutter create .`)
-**/Pods/
-**/DerivedData/
+# Flutter build output
+schoolify_app/build/
+schoolify_app/.dart_tool/
+schoolify_app/.flutter-plugins
+schoolify_app/.flutter-plugins-dependencies
+
+# Cursor IDE
+.cursor/
+
+# Supabase local dev
+supabase/.branches/
+supabase/.temp/

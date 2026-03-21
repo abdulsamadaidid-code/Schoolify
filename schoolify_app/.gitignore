@@ -1,0 +1,15 @@
+# Dart / Flutter
+.dart_tool/
+.packages
+build/
+*.iml
+.idea/
+*.lock
+
+# Env (never commit secrets)
+.env
+.env.*
+
+# Platform (after `flutter create .`)
+**/Pods/
+**/DerivedData/
