@@ -2,6 +2,9 @@
 
 **Status:** **Active** — Wave 2 is **complete**; this wave is the **current build**.
 
+**Living checklist:** [wave3_status.md](wave3_status.md).  
+**Phase 3 (attendance writes + mark flow):** [wave3_phase3_attendance_delegation.md](wave3_phase3_attendance_delegation.md).
+
 **Scope:** Product **Phases 2–4** in order (see [team_task_board.md](team_task_board.md)):
 
 | Product phase | Focus | Owner agents (typical) |

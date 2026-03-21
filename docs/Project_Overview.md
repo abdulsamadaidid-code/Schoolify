@@ -2,7 +2,7 @@
 
 **Purpose:** Quick orientation for anyone (including LLM agents) picking up work on this codebase. For depth, follow the linked docs—this file does not replace them.
 
-**Program status:** **Wave 1–2 complete** (foundations + Phase 1 dashboard). **Wave 3 in progress** — students → attendance → parent ([team_task_board.md](team_task_board.md), [wave3_delegation.md](wave3_delegation.md)).
+**Program status:** **Wave 1–2 complete** (foundations + Phase 1 dashboard). **Wave 3 in progress** — students → attendance → parent ([team_task_board.md](team_task_board.md), [wave3_delegation.md](wave3_delegation.md), [wave3_status.md](wave3_status.md)).
 
 ---
 
