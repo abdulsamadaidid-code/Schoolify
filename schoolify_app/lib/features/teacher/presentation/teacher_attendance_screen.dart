@@ -20,11 +20,14 @@ class TeacherAttendanceScreen extends ConsumerWidget {
 
   void _openMark(
     BuildContext context,
+    WidgetRef ref,
     TeacherAttendanceClass c,
   ) {
     final path =
         '/teacher/attendance/mark/${Uri.encodeComponent(c.id)}?label=${Uri.encodeQueryComponent(c.label)}';
-    context.push(path);
+    context.push(path).then((_) {
+      ref.invalidate(teacherAttendanceProvider);
+    });
   }
 
   @override
@@ -48,7 +51,7 @@ class TeacherAttendanceScreen extends ConsumerWidget {
                 color: Colors.transparent,
                 child: InkWell(
                   borderRadius: BorderRadius.circular(AppRadii.lg),
-                  onTap: () => _openMark(context, c),
+                  onTap: () => _openMark(context, ref, c),
                   child: SchoolifyCard(
                     child: Row(
                       children: [

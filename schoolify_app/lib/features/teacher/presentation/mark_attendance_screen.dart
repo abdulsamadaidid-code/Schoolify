@@ -8,7 +8,6 @@ import 'package:schoolify_app/core/ui/widgets/schoolify_button.dart';
 import 'package:schoolify_app/core/ui/widgets/schoolify_card.dart';
 import 'package:schoolify_app/core/ui/widgets/schoolify_chip.dart';
 import 'package:schoolify_app/features/teacher/data/teacher_attendance_repository.dart';
-import 'package:schoolify_app/features/teacher/presentation/teacher_attendance_screen.dart';
 import 'package:schoolify_app/features/teacher/presentation/teacher_students_screen.dart';
 
 /// Mark P/A/E for today's roster (school-wide until enrollments exist).
@@ -57,7 +56,6 @@ class _MarkAttendanceScreenState extends ConsumerState<MarkAttendanceScreen> {
         ),
       );
       if (!mounted) return;
-      ref.invalidate(teacherAttendanceProvider);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Attendance saved')),
       );
