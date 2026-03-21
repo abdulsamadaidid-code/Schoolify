@@ -26,12 +26,14 @@ Use this as a **living** tracker; owners are typical agent roles from [team_task
 
 | Item | Status | Notes |
 |------|--------|--------|
-| Schema: `attendance` (`002`) | [x] | `date`, `status` ∈ present/absent/excused, `school_id`, `student_id` |
+| Schema: `attendance` (`002`) | [x] | `date`, `status` ∈ present/absent/**late**, `school_id`, `student_id` |
 | RLS: **SELECT** on `attendance` | [x] | Tenant-scoped (`002`) |
-| RLS: **INSERT/UPDATE** (or RPC) for marks | [ ] | **Blocking** for real marking — see [wave3_phase3_attendance_delegation.md](wave3_phase3_attendance_delegation.md) |
-| DB: idempotency **unique (school_id, student_id, date)** | [ ] | Recommended before/at same time as writes |
-| Flutter: mark attendance flow (teacher/admin) | [ ] | Today [`TeacherAttendanceScreen`](../schoolify_app/lib/features/teacher/presentation/teacher_attendance_screen.dart) is **read-only** class list |
-| Flutter: repository `upsert` / mark APIs | [ ] | Wire to Supabase after migration |
+| RLS: **INSERT/UPDATE** via `upsert_attendance_mark` RPC (`004`) | [x] | teacher/admin only; parent read-only |
+| DB: idempotency **unique (school_id, student_id, date)** (`004`) | [x] | One row per student per day |
+| DB: status updated to `present/absent/late` (`005`) | [x] | Replaces `excused`; existing rows migrated |
+| Flutter: mark attendance flow (teacher) | [x] | [`MarkAttendanceScreen`](../schoolify_app/lib/features/teacher/presentation/mark_attendance_screen.dart) — P/A/L chips, Save button |
+| Flutter: repository `upsertMark` | [x] | [`teacher_attendance_repository`](../schoolify_app/lib/features/teacher/data/teacher_attendance_repository.dart) |
+| Flutter: attendance list refreshes after save | [x] | `teacherAttendanceProvider` invalidated on save |
 | Monthly summary / history (product) | [ ] | Partial reads exist; finalize UX + queries |
 
 ---

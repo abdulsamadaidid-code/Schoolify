@@ -18,7 +18,7 @@ class TeacherAttendanceClass {
 abstract class TeacherAttendanceRepository {
   Future<List<TeacherAttendanceClass>> today({required String schoolId});
 
-  /// Idempotent upsert for one student/day. [status]: `present` | `absent` | `excused`.
+  /// Idempotent upsert for one student/day. [status]: `present` | `absent` | `late`.
   Future<void> upsertMark({
     required String schoolId,
     required String studentId,
