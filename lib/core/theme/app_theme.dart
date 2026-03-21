@@ -62,7 +62,7 @@ abstract final class AppTheme {
           borderRadius: BorderRadius.circular(AppRadii.lg),
         ),
       ),
-      inputDecorationTheme: InputDecorationThemeData(
+      inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: SchoolifyColors.light.surfaceTierLowest,
         contentPadding: const EdgeInsets.symmetric(
@@ -163,7 +163,7 @@ abstract final class AppTheme {
           borderRadius: BorderRadius.circular(AppRadii.lg),
         ),
       ),
-      inputDecorationTheme: InputDecorationThemeData(
+      inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: SchoolifyColors.dark.surfaceTierLowest,
         contentPadding: const EdgeInsets.symmetric(
