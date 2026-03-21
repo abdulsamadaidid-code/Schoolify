@@ -40,9 +40,9 @@ class RoleSelectScreen extends ConsumerWidget {
               const SizedBox(height: 24),
             ],
             AppPrimaryButton(
-              label: 'Continue as Parent',
+              label: 'Continue as Admin',
               onPressed: () {
-                ref.read(authProvider.notifier).signInDemo(role: UserRole.parent);
+                ref.read(authProvider.notifier).signInDemo(role: UserRole.admin);
               },
             ),
             const SizedBox(height: 12),
@@ -50,6 +50,13 @@ class RoleSelectScreen extends ConsumerWidget {
               label: 'Continue as Teacher',
               onPressed: () {
                 ref.read(authProvider.notifier).signInDemo(role: UserRole.teacher);
+              },
+            ),
+            const SizedBox(height: 12),
+            AppPrimaryButton(
+              label: 'Continue as Parent',
+              onPressed: () {
+                ref.read(authProvider.notifier).signInDemo(role: UserRole.parent);
               },
             ),
           ],
