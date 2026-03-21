@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 
 import 'package:schoolify_app/app/router/go_router_refresh.dart';
 import 'package:schoolify_app/app/router/routes.dart';
-import 'package:schoolify_app/app/shell/app_shell.dart';
 import 'package:schoolify_app/core/auth/domain/auth_session.dart';
 import 'package:schoolify_app/core/auth/domain/user_role.dart';
 import 'package:schoolify_app/core/auth/providers/auth_providers.dart';
@@ -12,6 +11,9 @@ import 'package:schoolify_app/features/auth/presentation/login_page.dart';
 import 'package:schoolify_app/features/auth/presentation/role_select_screen.dart';
 import 'package:schoolify_app/features/home/presentation/pending_role_page.dart';
 import 'package:schoolify_app/features/admin/presentation/admin_dashboard_screen.dart';
+import 'package:schoolify_app/features/admin/presentation/admin_messages_placeholder_screen.dart';
+import 'package:schoolify_app/features/admin/presentation/admin_shell.dart';
+import 'package:schoolify_app/features/students/presentation/students_list_screen.dart';
 import 'package:schoolify_app/features/home/presentation/splash_page.dart';
 import 'package:schoolify_app/features/parent/presentation/parent_announcements_screen.dart';
 import 'package:schoolify_app/features/parent/presentation/parent_attendance_screen.dart';
@@ -52,10 +54,46 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.admin,
-        builder: (context, state) => const AppShell(
-          role: UserRole.admin,
-          child: AdminDashboardScreen(),
-        ),
+        redirect: (context, state) {
+          if (state.uri.path == AppRoutes.admin) {
+            return AppRoutes.adminDashboard;
+          }
+          return null;
+        },
+        routes: [
+          StatefulShellRoute.indexedStack(
+            builder: (context, state, navigationShell) {
+              return AdminShell(navigationShell: navigationShell);
+            },
+            branches: [
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: 'dashboard',
+                    builder: (context, state) => const AdminDashboardScreen(),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: 'students',
+                    builder: (context, state) => const StudentsListScreen(),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: 'messages',
+                    builder: (context, state) =>
+                        const AdminMessagesPlaceholderScreen(),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
       ),
       GoRoute(
         path: '/parent',
@@ -229,8 +267,8 @@ String? _redirectDemo(AuthSession session, String loc) {
     return null;
   }
   if (role == UserRole.admin) {
-    if (loc != AppRoutes.admin) {
-      return AppRoutes.admin;
+    if (!loc.startsWith('/admin')) {
+      return AppRoutes.adminDashboard;
     }
     return null;
   }
@@ -249,7 +287,7 @@ String? _redirectSupabase(AuthSession session, String loc) {
 
   final role = session.role!;
   final home = switch (role) {
-    UserRole.admin => AppRoutes.admin,
+    UserRole.admin => AppRoutes.adminDashboard,
     UserRole.teacher => '/teacher/dashboard',
     UserRole.parent => '/parent/dashboard',
   };
@@ -278,8 +316,11 @@ String? _redirectSupabase(AuthSession session, String loc) {
     }
     return null;
   }
-  if (role == UserRole.admin && loc != AppRoutes.admin) {
-    return AppRoutes.admin;
+  if (role == UserRole.admin) {
+    if (!loc.startsWith('/admin')) {
+      return AppRoutes.adminDashboard;
+    }
+    return null;
   }
   return null;
 }

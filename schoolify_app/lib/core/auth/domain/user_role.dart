@@ -10,7 +10,7 @@ enum UserRole {
 
 extension UserRoleX on UserRole {
   String get routePath => switch (this) {
-        UserRole.admin => '/admin',
+        UserRole.admin => '/admin/dashboard',
         UserRole.teacher => '/teacher',
         UserRole.parent => '/parent',
       };
