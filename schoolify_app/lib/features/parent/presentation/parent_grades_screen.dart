@@ -6,11 +6,17 @@ import 'package:schoolify_app/core/ui/app_card.dart';
 import 'package:schoolify_app/core/ui/async_page_body.dart';
 import 'package:schoolify_app/core/ui/sign_out_button.dart';
 import 'package:schoolify_app/features/parent/data/parent_grades_repository.dart';
+import 'package:schoolify_app/features/parent/presentation/parent_context_providers.dart';
 
 final parentGradesProvider = FutureProvider.autoDispose((ref) async {
   final schoolId = ref.watch(schoolIdProvider);
   if (schoolId == null) throw StateError('Missing school context');
-  return ref.read(parentGradesRepositoryProvider).recent(schoolId: schoolId);
+  final studentId = await ref.watch(parentContextStudentIdProvider.future);
+  if (studentId == null) return <GradeItem>[];
+  return ref.read(parentGradesRepositoryProvider).recent(
+        schoolId: schoolId,
+        studentId: studentId,
+      );
 });
 
 class ParentGradesScreen extends ConsumerWidget {

@@ -5,24 +5,30 @@ import 'package:schoolify_app/core/config/env.dart';
 import 'package:schoolify_app/core/models/attendance_day.dart';
 
 abstract class ParentAttendanceRepository {
-  Future<List<AttendanceDay>> recent({required String schoolId});
+  Future<List<AttendanceDay>> recent({
+    required String schoolId,
+    required String studentId,
+  });
 }
 
 class StubParentAttendanceRepository implements ParentAttendanceRepository {
   @override
-  Future<List<AttendanceDay>> recent({required String schoolId}) async {
+  Future<List<AttendanceDay>> recent({
+    required String schoolId,
+    required String studentId,
+  }) async {
     final now = DateTime.now();
     return List.generate(5, (i) {
       final d = now.subtract(Duration(days: i));
       return AttendanceDay(
         date: d,
-        statusLabel: i == 2 ? 'Excused' : 'Present',
+        statusLabel: i == 2 ? 'Late' : 'Present',
       );
     });
   }
 }
 
-/// Loads `students` for the tenant, then recent `attendance` rows for that student.
+/// Loads recent `attendance` rows for the selected student.
 class SupabaseParentAttendanceRepository implements ParentAttendanceRepository {
   SupabaseParentAttendanceRepository({SupabaseClient? client})
       : _client = client ?? Supabase.instance.client;
@@ -30,20 +36,10 @@ class SupabaseParentAttendanceRepository implements ParentAttendanceRepository {
   final SupabaseClient _client;
 
   @override
-  Future<List<AttendanceDay>> recent({required String schoolId}) async {
-    final student = await _client
-        .from('students')
-        .select('id')
-        .eq('school_id', schoolId)
-        .order('created_at', ascending: true)
-        .limit(1)
-        .maybeSingle();
-
-    if (student == null) return [];
-
-    final studentId = student['id'] as String;
-
-    // Join `students` so rows are tied to the tenant student (FK + `school_id`).
+  Future<List<AttendanceDay>> recent({
+    required String schoolId,
+    required String studentId,
+  }) async {
     final rows = await _client
         .from('attendance')
         .select('date, status, students!inner(school_id)')
@@ -64,7 +60,6 @@ class SupabaseParentAttendanceRepository implements ParentAttendanceRepository {
         'present' => 'Present',
         'absent' => 'Absent',
         'late' => 'Late',
-        'excused' => 'Excused', // legacy rows if any
         _ => status.isEmpty ? '—' : status,
       };
       return AttendanceDay(date: date, statusLabel: label);

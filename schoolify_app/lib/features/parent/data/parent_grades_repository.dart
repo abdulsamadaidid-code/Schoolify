@@ -5,12 +5,18 @@ import 'package:schoolify_app/core/config/env.dart';
 import 'package:schoolify_app/core/models/grade_item.dart';
 
 abstract class ParentGradesRepository {
-  Future<List<GradeItem>> recent({required String schoolId});
+  Future<List<GradeItem>> recent({
+    required String schoolId,
+    required String studentId,
+  });
 }
 
 class StubParentGradesRepository implements ParentGradesRepository {
   @override
-  Future<List<GradeItem>> recent({required String schoolId}) async {
+  Future<List<GradeItem>> recent({
+    required String schoolId,
+    required String studentId,
+  }) async {
     return const [
       GradeItem(
         courseLabel: 'Mathematics',
@@ -33,19 +39,10 @@ class SupabaseParentGradesRepository implements ParentGradesRepository {
   final SupabaseClient _client;
 
   @override
-  Future<List<GradeItem>> recent({required String schoolId}) async {
-    final student = await _client
-        .from('students')
-        .select('id')
-        .eq('school_id', schoolId)
-        .order('created_at', ascending: true)
-        .limit(1)
-        .maybeSingle();
-
-    if (student == null) return [];
-
-    final studentId = student['id'] as String;
-
+  Future<List<GradeItem>> recent({
+    required String schoolId,
+    required String studentId,
+  }) async {
     final rows = await _client
         .from('grade_items')
         .select('course_label, assignment_label, score_label')
