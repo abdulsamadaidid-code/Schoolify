@@ -15,6 +15,9 @@
 - Provider lock: **OneSignal only** for Track B and future iOS enablement (no Firebase, no FCM, no FlutterFire)
 - Engineering constraint: Flutter and Edge Function code must include clear iOS hooks/stubs that are disabled in Wave 5
 
+**Delivery status update:** **Track B infrastructure is shipped** (migrations `017`-`020`, OneSignal Edge Function deployed, scheduler active, Flutter token lifecycle wired).
+**Activation status:** push triggers are **not yet end-to-end active** until feature event producers insert rows into `notification_events`.
+
 ---
 
 ## 1) Database migration plan
@@ -315,3 +318,10 @@ Prepare later (future wave):
 - Cross-tenant isolation validated with real role accounts
 - Web push remains out of scope and not implemented in this wave
 - iOS is explicitly deferred (not dropped); iOS hooks/stubs are present and disabled so later enablement requires credentials/config only
+
+## 7) Remaining work to activate end-to-end delivery
+
+- Messaging producer: write `notification_events` on message send for recipients (excluding sender).
+- Announcements producer: write `notification_events` on post/edit flows.
+- Attendance producer: write `notification_events` on mark create/update flows.
+- Verify each producer path creates queue rows, gets claimed by `claim_notification_events_batch`, and records send outcomes in `notification_deliveries`.

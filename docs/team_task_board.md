@@ -119,8 +119,9 @@ Delivered in **product phases** (sequential order):
 ### Wave 5 — Current execution scope (**active**)
 
 - Messaging between staff and parents (**Track C shipped**).
-- OneSignal push notifications via Edge Functions (**Track B active**).
+- OneSignal push notifications via Edge Functions (**Track B shipped - infrastructure complete**).
 - Fees/payments deferred until payment strategy is finalized.
+- Remaining activation work: wire event producers (messaging/announcements/attendance) to `notification_events` for end-to-end push firing.
 
 **Wave 5 decision lock (do not reopen without Lead approval):**
 
@@ -134,7 +135,7 @@ Delivered in **product phases** (sequential order):
 
 | Column | Typical items |
 |--------|----------------|
-| **Now** | Wave 5 — OneSignal push integration (Track B) after Track C messaging ship |
+| **Now** | Wave 5 — wire `notification_events` producers (messaging/announcements/attendance) for end-to-end push activation |
 | **Next** | Fees/payments after provider decision (Stripe + local method) |
 | **Blocked** | Work requiring payment-method decision or explicit product scope changes |
 | **Done** | Waves 1–4 shipped; `analyze` green in CI/manual and no architecture drift |

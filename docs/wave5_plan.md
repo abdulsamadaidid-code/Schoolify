@@ -30,7 +30,7 @@
 ## Current state snapshot (for planning)
 
 - **Messaging (Track C):** **shipped** — migrations `015` + `016` applied, admin/teacher/parent message tabs wired, teacher participant-source fix completed.
-- **Push (Track B):** no notification token/storage/service modules yet.
+- **Push (Track B):** **shipped (infrastructure)** — migrations `017` + `018` + `019` + `020`, OneSignal Edge Function deployment, scheduler via `pg_cron`, and Flutter token lifecycle wiring are in place.
 - **Announcements/attendance/grades:** already produce user-facing events that can become push triggers once notification plumbing exists.
 
 ---
@@ -113,6 +113,9 @@ Repository behavior:
 
 ## Track B — Push notifications (OneSignal via Supabase Edge Functions)
 
+**Status:** **Shipped (infrastructure complete).**  
+**Final activation dependency:** event producers for messaging, announcements, and attendance must write to `notification_events`.
+
 **Platform scope lock:** Track B is **mobile-only**, with **Android delivery in Wave 5**.  
 **iOS status:** explicitly **deferred** to a future wave pending Apple Developer account (not permanently out of scope).  
 **Explicitly out of scope in this track:** web push (service worker/VAPID).
@@ -177,6 +180,13 @@ Wire initialization:
 - Foreground and background notification behavior works on at least one Android device.
 - Token cleanup exists for invalid/unregistered tokens.
 - iOS hooks/stubs exist in code but remain disabled in Wave 5.
+
+### Remaining before pushes fire end-to-end
+
+- Wire message send flow to insert recipient rows into `notification_events` (excluding sender).
+- Wire announcement publish/edit flow to insert `notification_events`.
+- Wire attendance mark create/update flow to insert `notification_events`.
+- Run one full smoke pass per producer (message, announcement, attendance) and verify delivery logs in `notification_deliveries`.
 
 ---
 
