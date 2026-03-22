@@ -113,7 +113,8 @@ Repository behavior:
 
 ## Track B — Push notifications (Supabase push)
 
-**Platform scope lock:** Track B is **mobile-only** for Wave 5 (**iOS + Android**).  
+**Platform scope lock:** Track B is **mobile-only**, with **Android delivery in Wave 5**.  
+**iOS status:** explicitly **deferred** to a future wave pending Apple Developer account (not permanently out of scope).  
 **Explicitly out of scope in this track:** web push (service worker/VAPID).
 
 ### What needs to be built
@@ -173,8 +174,9 @@ Wire initialization:
 
 - Authenticated users register/update push token successfully.
 - Triggered events create notification records and produce Supabase push send attempts.
-- Foreground and background notification behavior works on at least one iOS and one Android device.
+- Foreground and background notification behavior works on at least one Android device.
 - Token cleanup exists for invalid/unregistered tokens.
+- iOS hooks/stubs exist in code but remain disabled in Wave 5.
 
 ---
 

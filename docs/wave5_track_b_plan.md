@@ -1,6 +1,6 @@
-# Wave 5 Track B plan - Push notifications (mobile only)
+# Wave 5 Track B plan - Push notifications (Android delivery, iOS-ready)
 
-**Track goal:** Ship production-safe push notifications for **iOS and Android only** using **Supabase-first infrastructure**:
+**Track goal:** Ship production-safe push notifications for **Android in Wave 5** using **Supabase-first infrastructure**, while keeping code paths **iOS-ready** for a later wave:
 
 - `device_tokens` in Supabase for token ownership and lifecycle
 - `notification_events` as the event contract (fed by messaging and other producers)
@@ -9,9 +9,11 @@
 
 **Scope lock (Wave 5 Track B):**
 
-- Platform in scope: **iOS + Android**
+- Delivery platform in scope: **Android only**
+- Deferred platform (not removed): **iOS push**, pending Apple Developer account
 - Platform out of scope: **Web push** (service worker/VAPID) for this wave
 - Provider lock: **No Firebase, no FCM, no FlutterFire client integration**
+- Engineering constraint: Flutter and Edge Function code must include clear iOS hooks/stubs that are disabled in Wave 5
 
 ---
 
@@ -146,6 +148,8 @@ Per-event pipeline:
 3. For each token:
    - Build platform payload (`title`, `body`, `payload`, deep link metadata).
    - Send through chosen push transport adapter.
+   - Android path is active in Wave 5.
+   - iOS path exists as a disabled stub (`enabled=false` / feature flag guard) for future activation with credentials only.
    - Insert `notification_deliveries` result row.
 4. Finalize event:
    - `sent` if at least one token succeeded
@@ -169,7 +173,7 @@ Scheduling:
 
 ---
 
-## 3) Flutter implementation plan (mobile)
+## 3) Flutter implementation plan (mobile, Android-active)
 
 ## 3.1 New modules
 
@@ -208,6 +212,12 @@ Foreground/background behavior:
 - Foreground: show local in-app notification UI or banner
 - Background/terminated: OS notification opens app -> route to target thread/screen using payload metadata
 
+iOS-ready requirement (Wave 5):
+
+- Keep iOS token/provider integration points as explicit placeholders in service/repository interfaces.
+- Guard iOS runtime registration with a disabled feature toggle until Apple credentials are available.
+- Do not require iOS credentials or iOS-specific setup to ship this wave.
+
 Guardrails:
 
 - Register token only when `school_id` is resolved
@@ -221,6 +231,7 @@ Guardrails:
 - Token rotation updates row correctly
 - Revoked/invalid token is cleaned up after send failure
 - Cold-start deep link opens correct screen
+- iOS code path compiles and remains disabled without credentials
 
 ---
 
@@ -251,13 +262,15 @@ Recommended merge order:
 
 Complete these once to avoid blockers mid-implementation.
 
-## 5.1 Apple (iOS push)
+## 5.1 Apple (iOS push) - deferred
+
+No Apple setup is required for Wave 5 Track B delivery.
+
+Prepare later (future wave):
 
 - Apple Developer account access with push capability permissions
-- Create APNs Auth Key (`.p8`), note `Key ID` and `Team ID`
-- Enable Push Notifications capability for the iOS app bundle
-- Provide APNs credentials to deployment secrets used by `send_push_notifications`
-- Confirm bundle identifier matches app config
+- APNs Auth Key (`.p8`), `Key ID`, `Team ID`
+- iOS bundle push capability + deployment secrets for the iOS send path
 
 ## 5.2 Android push provider credentials
 
@@ -269,6 +282,7 @@ Complete these once to avoid blockers mid-implementation.
 
 - Ensure Edge Functions are enabled in the target project
 - Set push provider secrets in Supabase (`supabase secrets set ...`)
+- Keep iOS secrets unset for this wave; iOS send path remains inactive
 - Set optional limits/config:
   - `PUSH_BATCH_SIZE`
   - `PUSH_MAX_ATTEMPTS`
@@ -286,8 +300,9 @@ Complete these once to avoid blockers mid-implementation.
 
 - Migrations `017`-`019` applied and reviewed
 - Edge Function sends push for pending events and writes delivery logs
-- Flutter app registers/unregisters tokens reliably on iOS and Android
+- Flutter app registers/unregisters tokens reliably on Android
 - Message-created events produce push notifications end-to-end
 - At least one announcement and one attendance event path verified
 - Cross-tenant isolation validated with real role accounts
 - Web push remains out of scope and not implemented in this wave
+- iOS is explicitly deferred (not dropped); iOS hooks/stubs are present and disabled so later enablement requires credentials/config only
