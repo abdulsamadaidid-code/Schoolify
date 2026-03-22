@@ -43,6 +43,11 @@ class TeacherShell extends StatelessWidget {
             selectedIcon: Icon(Icons.campaign),
             label: 'News',
           ),
+          NavigationDestination(
+            icon: Icon(Icons.chat_outlined),
+            selectedIcon: Icon(Icons.chat),
+            label: 'Messages',
+          ),
         ],
       ),
     );

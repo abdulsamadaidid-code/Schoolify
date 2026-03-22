@@ -13,10 +13,13 @@
 |------|-----------------|--------|
 | **Wave 1** | Foundations (platform, baseline DB, design system, auth/tenancy) | **Done** |
 | **Wave 2** | Phase 1 — dashboard shell + KPI/schedule (mock or minimal real read) | **Done** |
-| **Wave 3** | Phase 2–4 — students → attendance → parent mobile (see below) | **In progress** |
+| **Wave 3** | Phase 2–4 — students → attendance → parent mobile | **Done** |
+| **Wave 4** | Grades writes, announcements E2E, admin user management | **Done** |
+| **Wave 5** | Messaging + push notifications (FCM); fees deferred | **In progress** |
 
 **Wave 2 orchestration (archived):** [wave2_delegation.md](wave2_delegation.md) — **completed.**  
-**Wave 3 orchestration (active):** [wave3_delegation.md](wave3_delegation.md).
+**Wave 3 orchestration (archived):** [wave3_delegation.md](wave3_delegation.md).  
+**Wave 5 plan (active):** [wave5_plan.md](wave5_plan.md).
 
 ---
 
@@ -69,7 +72,7 @@
 | Student CRUD / enrollment | Auth + tenant context + student/class tables + RLS |
 | Attendance | Enrollments + attendance tables + RLS |
 | Parent mobile | Guardian linkage + parent read policies |
-| Stripe, FCM, advanced Realtime | Explicit slice per [INTEGRATIONS_AND_SETUP.md](INTEGRATIONS_AND_SETUP.md) |
+| Payments (Stripe + local method) | Product and integration decision before implementation |
 
 ---
 
@@ -99,7 +102,7 @@
 5. **Dashboard feature:** Shell + KPI/schedule placeholders; Stitch for layout only.  
    **Acceptance:** Responsive shell matches plan; mock or one real read.
 
-### Wave 3 — Locked implementation plan (**current build**)
+### Wave 3 — Locked implementation plan (**done**)
 
 Delivered in **product phases** (sequential order):
 
@@ -107,7 +110,23 @@ Delivered in **product phases** (sequential order):
 - **Phase 3** — Attendance: date-only sessions, idempotent marks, monthly counts + history.
 - **Phase 4** — Parent mobile: summary + history; calendar optional.
 
-Post-MVP: grades, fees, messaging per product scope — separate milestones.
+### Wave 4 — Post-parent product delivery (**done**)
+
+- Grades write flow.
+- Announcements end-to-end (create/edit/delete with role-safe access).
+- Admin user management (list/add/remove/update role + parent link tooling).
+
+### Wave 5 — Current execution scope (**active**)
+
+- Messaging between staff and parents (**Track C shipped**).
+- Push notifications (FCM) (**Track B active**).
+- Fees/payments deferred until payment strategy is finalized.
+
+**Wave 5 decision lock (do not reopen without Lead approval):**
+
+- Teacher participant-source fix in messaging is required before Track C sign-off (**completed in Track C**).
+- Message -> `notification_events` persistence is deferred to Track B (push), not a Track C blocker.
+- Strict staff↔parent participant enforcement remains open product policy and is intentionally not blocking current Track C delivery.
 
 ---
 
@@ -115,10 +134,10 @@ Post-MVP: grades, fees, messaging per product scope — separate milestones.
 
 | Column | Typical items |
 |--------|----------------|
-| **Now** | Wave 3 — students / attendance / parent per phase order; RLS write policies + app flows |
-| **Next** | Post-MVP polish, payments, push |
-| **Blocked** | Anything that needs explicit product/infra decision (see integrations doc) |
-| **Done** | Wave 1–2 foundations + dashboard; small PRs, `analyze` green, no architecture drift |
+| **Now** | Wave 5 — FCM push integration (Track B) after Track C messaging ship |
+| **Next** | Fees/payments after provider decision (Stripe + local method) |
+| **Blocked** | Work requiring payment-method decision or explicit product scope changes |
+| **Done** | Waves 1–4 shipped; `analyze` green in CI/manual and no architecture drift |
 
 ---
 
@@ -143,4 +162,4 @@ Post-MVP: grades, fees, messaging per product scope — separate milestones.
 
 ---
 
-*Last updated: Wave 2 marked complete; Wave 3 in progress.*
+*Last updated: Waves 1-4 marked complete; Wave 5 active (messaging + push, fees deferred).*

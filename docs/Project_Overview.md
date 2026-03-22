@@ -2,7 +2,7 @@
 
 **Purpose:** Quick orientation for anyone (including LLM agents) picking up work on this codebase. For depth, follow the linked docs—this file does not replace them.
 
-**Program status:** **Wave 1–2 complete** (foundations + Phase 1 dashboard). **Wave 3 in progress** — students → attendance → parent ([team_task_board.md](team_task_board.md), [wave3_delegation.md](wave3_delegation.md), [wave3_status.md](wave3_status.md)).
+**Program status:** **Waves 1–4 complete** (foundations, dashboard, students/attendance/parent, grades/announcements/admin users). **Wave 5 in progress** — **messaging first, then push notifications (FCM)**; **fees/payments deferred** pending payment-strategy decision ([team_task_board.md](team_task_board.md), [wave5_plan.md](wave5_plan.md)).
 
 ---
 

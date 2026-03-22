@@ -22,6 +22,8 @@ import 'package:schoolify_app/features/parent/presentation/parent_dashboard_scre
 import 'package:schoolify_app/features/parent/presentation/parent_fees_screen.dart';
 import 'package:schoolify_app/features/parent/presentation/parent_grades_screen.dart';
 import 'package:schoolify_app/features/parent/presentation/parent_shell.dart';
+import 'package:schoolify_app/features/messaging/presentation/messages_list_screen.dart';
+import 'package:schoolify_app/features/messaging/presentation/thread_screen.dart';
 import 'package:schoolify_app/features/teacher/presentation/teacher_announcements_screen.dart';
 import 'package:schoolify_app/features/teacher/presentation/mark_attendance_screen.dart';
 import 'package:schoolify_app/features/teacher/presentation/teacher_attendance_screen.dart';
@@ -101,6 +103,27 @@ final routerProvider = Provider<GoRouter>((ref) {
                   ),
                 ],
               ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: 'messages',
+                    builder: (context, state) => const MessagesListScreen(),
+                    routes: [
+                      GoRoute(
+                        path: ':threadId',
+                        builder: (context, state) {
+                          final threadId = state.pathParameters['threadId']!;
+                          final subject = state.uri.queryParameters['subject'];
+                          return ThreadScreen(
+                            threadId: threadId,
+                            subject: subject,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ],
           ),
         ],
@@ -158,6 +181,27 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'fees',
                     builder: (context, state) => const ParentFeesScreen(),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: 'messages',
+                    builder: (context, state) => const MessagesListScreen(),
+                    routes: [
+                      GoRoute(
+                        path: ':threadId',
+                        builder: (context, state) {
+                          final threadId = state.pathParameters['threadId']!;
+                          final subject = state.uri.queryParameters['subject'];
+                          return ThreadScreen(
+                            threadId: threadId,
+                            subject: subject,
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -234,6 +278,27 @@ final routerProvider = Provider<GoRouter>((ref) {
                     path: 'announcements',
                     builder: (context, state) =>
                         const TeacherAnnouncementsScreen(),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: 'messages',
+                    builder: (context, state) => const MessagesListScreen(),
+                    routes: [
+                      GoRoute(
+                        path: ':threadId',
+                        builder: (context, state) {
+                          final threadId = state.pathParameters['threadId']!;
+                          final subject = state.uri.queryParameters['subject'];
+                          return ThreadScreen(
+                            threadId: threadId,
+                            subject: subject,
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),

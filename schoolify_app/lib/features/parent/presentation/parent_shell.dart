@@ -43,6 +43,11 @@ class ParentShell extends StatelessWidget {
             selectedIcon: Icon(Icons.payments),
             label: 'Fees',
           ),
+          NavigationDestination(
+            icon: Icon(Icons.chat_outlined),
+            selectedIcon: Icon(Icons.chat),
+            label: 'Messages',
+          ),
         ],
       ),
     );
