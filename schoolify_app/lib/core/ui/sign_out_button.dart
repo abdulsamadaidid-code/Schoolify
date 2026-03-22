@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:schoolify_app/app/router/routes.dart';
-import 'package:schoolify_app/core/auth/auth_notifier.dart';
-import 'package:schoolify_app/core/auth/providers/auth_providers.dart';
+import 'package:schoolify_app/core/auth/sign_out_actions.dart';
 import 'package:schoolify_app/core/config/env.dart';
 
 class SignOutButton extends ConsumerWidget {
@@ -16,11 +15,7 @@ class SignOutButton extends ConsumerWidget {
       icon: const Icon(Icons.logout),
       tooltip: 'Sign out',
       onPressed: () async {
-        if (Env.hasSupabaseConfig) {
-          await ref.read(authRepositoryProvider).signOut();
-        } else {
-          ref.read(authProvider.notifier).signOut();
-        }
+        await performSchoolifySignOut(ref);
         if (context.mounted) {
           context.go(
             Env.hasSupabaseConfig ? AppRoutes.login : AppRoutes.splash,

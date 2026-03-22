@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:schoolify_app/app/router/routes.dart';
-import 'package:schoolify_app/core/auth/auth_notifier.dart';
 import 'package:schoolify_app/core/auth/domain/user_role.dart';
-import 'package:schoolify_app/core/auth/providers/auth_providers.dart';
+import 'package:schoolify_app/core/auth/sign_out_actions.dart';
 import 'package:schoolify_app/core/config/env.dart';
 import 'package:go_router/go_router.dart';
 
@@ -60,11 +59,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                 IconButton(
                   tooltip: 'Sign out',
                   onPressed: () async {
-                    if (Env.hasSupabaseConfig) {
-                      await ref.read(authRepositoryProvider).signOut();
-                    } else {
-                      ref.read(authProvider.notifier).signOut();
-                    }
+                    await performSchoolifySignOut(ref);
                     if (context.mounted) {
                       context.go(AppRoutes.splash);
                     }
@@ -104,11 +99,7 @@ class _AppShellState extends ConsumerState<AppShell> {
               IconButton(
                 tooltip: 'Sign out',
                 onPressed: () async {
-                  if (Env.hasSupabaseConfig) {
-                    await ref.read(authRepositoryProvider).signOut();
-                  } else {
-                    ref.read(authProvider.notifier).signOut();
-                  }
+                  await performSchoolifySignOut(ref);
                   if (context.mounted) {
                     context.go(AppRoutes.splash);
                   }

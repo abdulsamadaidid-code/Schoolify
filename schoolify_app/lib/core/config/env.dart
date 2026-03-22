@@ -16,6 +16,12 @@ abstract final class Env {
     defaultValue: '',
   );
 
+  /// OneSignal App ID (safe to ship in the client). REST API key stays on the server only.
+  static const String onesignalAppId = String.fromEnvironment(
+    'ONESIGNAL_APP_ID',
+    defaultValue: '',
+  );
+
   static bool get hasSupabaseConfig =>
       supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
 }
