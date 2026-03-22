@@ -113,6 +113,9 @@ Repository behavior:
 
 ## Track B — Push notifications (Supabase push)
 
+**Platform scope lock:** Track B is **mobile-only** for Wave 5 (**iOS + Android**).  
+**Explicitly out of scope in this track:** web push (service worker/VAPID).
+
 ### What needs to be built
 
 #### B1) Database and token model (Supabase/DB owner)
