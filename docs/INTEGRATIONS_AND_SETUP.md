@@ -32,7 +32,7 @@ This document inventories third-party services, Flutter packages, and developer 
 | State | Riverpod | Per project rules |
 | Backend | Supabase | Auth, Postgres (RLS), Storage, Realtime, Edge Functions |
 | Payments | Stripe | School subscriptions; optional fee collection |
-| Push | Supabase push via Edge Functions + `device_tokens` | Push pipeline owned in Supabase stack |
+| Push | OneSignal + Supabase Edge Functions + `device_tokens` | One provider for Android now and iOS later |
 | In-app messaging | Supabase Realtime (+ Postgres) | Threads/messages; presence optional later |
 | Optional | Sentry, PostHog | Errors and product analytics (MVP-optional) |
 
@@ -60,7 +60,7 @@ flowchart LR
 
   subgraph external [External]
     Stripe[Stripe]
-    PushProvider[Push provider/APNs+Android]
+    PushProvider[OneSignal/APNs+Android]
   end
 
   Web --> Auth
@@ -177,22 +177,23 @@ flowchart LR
 
 | Service | Purpose |
 |---------|---------|
-| **Supabase push pipeline** | Device tokens + notification events + Edge Function delivery |
+| **OneSignal push pipeline** | Device tokens + notification events + Edge Function delivery via OneSignal REST API |
 
-**Why:** Keeps push in the same Supabase-first architecture (RLS-backed token storage, event-driven delivery, and Edge Functions for secure sends).
+**Why:** Uses one cross-platform provider (Android now, iOS later) while keeping tenant-safe event orchestration in Supabase.
 
 **Installation (high level):**
 
-1. Create token tables in Supabase (`device_tokens`, `notification_events`, optional `notification_deliveries`) with tenant-aware access controls.
-2. Implement a Supabase Edge Function (for example `send_push_notifications`) that reads pending events, resolves user tokens, sends push, and records delivery outcome.
-3. Register/update device tokens from Flutter via `supabase_flutter` after auth and on token refresh.
+1. Create a OneSignal app and configure Android push (and iOS later when Apple account is available).
+2. Create token tables in Supabase (`device_tokens`, `notification_events`, optional `notification_deliveries`) with tenant-aware access controls.
+3. Implement a Supabase Edge Function (for example `send_push_notifications`) that reads pending events, resolves user tokens, calls OneSignal REST API, and records delivery outcome.
+4. Register/update device tokens from Flutter via `onesignal_flutter`, then persist tokens in Supabase after auth and on token refresh.
 
-**Flutter packages:** `supabase_flutter`; optionally `flutter_local_notifications` for foreground display.
+**Flutter packages:** `onesignal_flutter`, `supabase_flutter`; optionally `flutter_local_notifications` for foreground display.
 
 **Tips / caveats:**
 
-- **iOS:** Enable Push Notifications capability in Xcode; provide APNs credentials to your push delivery environment used by Edge Functions.
-- **Android:** Configure notification channels and provider credentials used by your Edge Function push sender.
+- **iOS:** Deferred for current wave; when enabled, complete Push capability + APNs setup in OneSignal.
+- **Android:** Configure notification channels and Android push setup in OneSignal.
 - **Web push** uses a different mechanism (VAPID, service worker)—scope separately if MVP includes web push.
 
 ---
@@ -276,11 +277,12 @@ Below: **purpose**, **install**, **configuration** at a high level. Adjust versi
 | `path` / `path_provider` | Paths and app dirs | `flutter pub add path path_provider` | — |
 | `file_picker` | Uploads to Storage | `flutter pub add file_picker` | Platform permissions |
 
-### 7.8 Supabase push notifications
+### 7.8 Push notifications (OneSignal + Supabase)
 
 | Package | Purpose | Install | Configuration |
 |---------|---------|---------|---------------|
-| `supabase_flutter` | Token registration + event-linked push workflow | `flutter pub add supabase_flutter` | URL + anon key at init |
+| `onesignal_flutter` | Push SDK integration (Android now, iOS later) | `flutter pub add onesignal_flutter` | OneSignal App ID setup + notification handlers |
+| `supabase_flutter` | Persist tokens + event-linked workflow | `flutter pub add supabase_flutter` | URL + anon key at init |
 | `flutter_local_notifications` | Show notifications in foreground | `flutter pub add flutter_local_notifications` | — |
 
 ### 7.9 Optional monitoring
@@ -376,12 +378,13 @@ Below: **purpose**, **install**, **configuration** at a high level. Adjust versi
 2. Optionally install **Stripe CLI**: `brew install stripe/stripe-cli/stripe`
 3. Login: `stripe login`; forward webhooks: `stripe listen --forward-to <local-or-ngrok-edge-function-url>`
 
-### 9.10 Supabase push setup
+### 9.10 OneSignal + Supabase Edge Function setup
 
-1. Apply push migrations for `device_tokens` and `notification_events`.
-2. Deploy the push Edge Function and set provider credentials as secrets.
-3. Wire Flutter token registration/update through `supabase_flutter`.
-4. Complete iOS push capability and Android notification channel setup.
+1. Create OneSignal app and configure Android push.
+2. Apply push migrations for `device_tokens` and `notification_events`.
+3. Deploy the push Edge Function and set `ONESIGNAL_APP_ID` + `ONESIGNAL_REST_API_KEY` as secrets.
+4. Wire Flutter token registration/update through `onesignal_flutter`, then persist in Supabase.
+5. Complete Android notification channel setup. Defer iOS setup until Apple Developer account is available.
 
 ### 9.11 Clone repo and first run
 

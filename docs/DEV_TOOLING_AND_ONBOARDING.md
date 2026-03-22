@@ -55,7 +55,7 @@ These are required to meet **Wave 1** acceptance: `flutter analyze` clean; app r
 
 | Tool | Role |
 |------|------|
-| **Supabase Edge Functions + native push setup** | Supabase push notifications (iOS/Android) |
+| **OneSignal + Supabase Edge Functions** | Push notifications (Android now, iOS later) |
 | **Sentry** | Crash reporting |
 | **PostHog** | Product analytics |
 | **CI (e.g. GitHub Actions)** | `analyze`, `test`, `build web` — suggested in INTEGRATIONS; **no workflow files in repo yet** |
@@ -82,7 +82,7 @@ These are required to meet **Wave 1** acceptance: `flutter analyze` clean; app r
 | `SUPABASE_URL`, `SUPABASE_ANON_KEY` | Flutter app (compile-time) | — |
 | Supabase **service_role** | Edge Functions / server only | Yes — never in Flutter |
 | Stripe **secret** + **webhook signing secret** | Edge Functions | Yes |
-| Push platform credentials (APNs/Android provider) | Edge Functions / deployment environment | Store as secrets; never commit |
+| OneSignal App ID + REST API Key | Edge Functions / deployment environment | Store as secrets; never commit |
 | Apple Developer / signing | iOS device/release | Certificates in Keychain / CI secrets |
 
 Local run pattern (from `schoolify_app/README.md`):

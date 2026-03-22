@@ -3,7 +3,7 @@
 **Goal:** Deliver the deferred communication infrastructure after Waves 1-4:
 
 1. Messaging between staff and parents
-2. Push notifications (Supabase push via Edge Functions)
+2. Push notifications (OneSignal via Supabase Edge Functions)
 
 **Scope change note:** Fees/payments are intentionally removed from Wave 5 and deferred to a future wave until payment strategy is decided (Stripe + local payment method).
 
@@ -23,7 +23,7 @@
 | Track | Primary owner agent | Supporting agents |
 |------|----------------------|-------------------|
 | Messaging | Feature: Messaging | Supabase/DB, Platform, Design system |
-| Push notifications (Supabase push) | Platform/Mobile infra | Supabase/DB, Feature agents, Auth & tenancy |
+| Push notifications (OneSignal via Supabase Edge Functions) | Platform/Mobile infra | Supabase/DB, Feature agents, Auth & tenancy |
 
 ---
 
@@ -111,7 +111,7 @@ Repository behavior:
 
 ---
 
-## Track B — Push notifications (Supabase push)
+## Track B — Push notifications (OneSignal via Supabase Edge Functions)
 
 **Platform scope lock:** Track B is **mobile-only**, with **Android delivery in Wave 5**.  
 **iOS status:** explicitly **deferred** to a future wave pending Apple Developer account (not permanently out of scope).  
@@ -139,12 +139,12 @@ RLS:
 - Users can manage their own tokens only.
 - App users do not directly write delivery logs (service role/Edge only).
 
-#### B2) Supabase push send pipeline (Platform owner)
+#### B2) OneSignal send pipeline (Platform owner)
 
 Build/extend Edge Function:
 
 - `send_push_notifications`
-  - reads `notification_events`, resolves `device_tokens`, and sends notifications from a Supabase Edge Function (provider-agnostic transport, no external push SDK dependency in app layer).
+  - reads `notification_events`, resolves `device_tokens`, and sends notifications via OneSignal REST API from a Supabase Edge Function.
 
 Event producers (initial):
 
@@ -156,8 +156,8 @@ Event producers (initial):
 
 Packages and setup:
 
-- Use `supabase_flutter` only for app-side token registration and event reads.
-- No separate client push package setup is required for this project plan.
+- Use `onesignal_flutter` for push SDK initialization, permission prompts, and token/subscription callbacks.
+- Use `supabase_flutter` for auth context and token persistence RPCs.
 
 Create:
 
@@ -173,7 +173,7 @@ Wire initialization:
 ### Acceptance criteria
 
 - Authenticated users register/update push token successfully.
-- Triggered events create notification records and produce Supabase push send attempts.
+- Triggered events create notification records and produce OneSignal send attempts.
 - Foreground and background notification behavior works on at least one Android device.
 - Token cleanup exists for invalid/unregistered tokens.
 - iOS hooks/stubs exist in code but remain disabled in Wave 5.
@@ -187,7 +187,7 @@ flowchart LR
   MsgDB[011 Messaging foundation]
   MsgUI[Messaging Flutter]
   PushDB[012 Push foundation]
-  PushSvc[Supabase_push_pipeline]
+  PushSvc[OneSignal_send_pipeline]
 
   MsgDB --> MsgUI
   MsgUI --> PushSvc
@@ -197,7 +197,7 @@ flowchart LR
 Recommended execution order:
 
 1. Track C messaging DB (`011`) + core messaging UI/repository first.
-2. Track B push DB (`012`) + Supabase push infrastructure second.
+2. Track B push DB (`012`) + OneSignal infrastructure second.
 3. Connect push event producers from messaging first, then announcements/attendance.
 4. Final integration QA across roles/devices.
 
@@ -218,7 +218,7 @@ Recommended execution order:
 
 ### Platform / Mobile infra agent
 
-- Own Supabase push setup and notification infrastructure.
+- Own OneSignal + Edge Function notification infrastructure.
 - Own Edge Function deployment docs and environment setup.
 
 ### Auth & tenancy agent
@@ -256,7 +256,7 @@ Recommended execution order:
 ## Done definition for Wave 5
 
 - Messaging track: role-safe threads/messages shipped for admin, teacher, and parent.
-- Push track: `device_tokens` stored and Supabase Edge Function delivery pipeline operational for at least message and announcement/attendance events.
+- Push track: `device_tokens` stored and OneSignal delivery pipeline via Supabase Edge Function operational for at least message and announcement/attendance events.
 - Messaging-first sequencing respected (push implemented only after messaging data model/repositories are in place).
 - Migrations and Edge Functions documented and repeatable for messaging and push.
 - `flutter analyze` and role-based smoke tests pass in Supabase-backed mode and stub mode.

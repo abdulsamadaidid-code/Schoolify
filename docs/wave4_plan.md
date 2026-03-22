@@ -237,7 +237,7 @@ Recommended merge order:
 
 - Fees module enhancements beyond current placeholders.
 - Stripe checkout/billing portal/webhooks and payment flows.
-- Push notifications (Supabase push), advanced realtime messaging, and grading analytics.
+- Push notifications (OneSignal via Supabase Edge Functions), advanced realtime messaging, and grading analytics.
 - Multi-school active-context switching UX (beyond existing `get_my_school_id()` assumptions).
 
 ---

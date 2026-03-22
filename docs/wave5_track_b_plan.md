@@ -1,10 +1,10 @@
 # Wave 5 Track B plan - Push notifications (Android delivery, iOS-ready)
 
-**Track goal:** Ship production-safe push notifications for **Android in Wave 5** using **Supabase-first infrastructure**, while keeping code paths **iOS-ready** for a later wave:
+**Track goal:** Ship production-safe push notifications for **Android in Wave 5** using **OneSignal as the push provider** (orchestrated by Supabase Edge Functions), while keeping code paths **iOS-ready** for a later wave:
 
 - `device_tokens` in Supabase for token ownership and lifecycle
 - `notification_events` as the event contract (fed by messaging and other producers)
-- Edge Function pipeline to fan out and send pushes
+- Edge Function pipeline to fan out and send pushes through OneSignal REST API
 - Delivery logging for retries, debugging, and operations
 
 **Scope lock (Wave 5 Track B):**
@@ -12,7 +12,7 @@
 - Delivery platform in scope: **Android only**
 - Deferred platform (not removed): **iOS push**, pending Apple Developer account
 - Platform out of scope: **Web push** (service worker/VAPID) for this wave
-- Provider lock: **No Firebase, no FCM, no FlutterFire client integration**
+- Provider lock: **OneSignal only** for Track B and future iOS enablement (no Firebase, no FCM, no FlutterFire)
 - Engineering constraint: Flutter and Edge Function code must include clear iOS hooks/stubs that are disabled in Wave 5
 
 ---
@@ -147,7 +147,7 @@ Per-event pipeline:
    - Write one `notification_deliveries` row with `status='skipped'`.
 3. For each token:
    - Build platform payload (`title`, `body`, `payload`, deep link metadata).
-   - Send through chosen push transport adapter.
+   - Send through OneSignal REST API (`/notifications`) using server-side credentials.
    - Android path is active in Wave 5.
    - iOS path exists as a disabled stub (`enabled=false` / feature flag guard) for future activation with credentials only.
    - Insert `notification_deliveries` result row.
@@ -165,6 +165,7 @@ Operational requirements:
 - Structured logs with `event_id`, `target_user_id`, result counts
 - Metrics endpoint/log summary for success/failure rates
 - No secrets in logs
+- Parse and persist OneSignal response IDs/error payloads in `notification_deliveries.provider_response`.
 
 Scheduling:
 
@@ -194,13 +195,18 @@ Supabase implementation:
 - Calls `upsert_device_token` RPC
 - Unregisters on logout/token invalidation
 
+Flutter package requirement:
+
+- Use `onesignal_flutter` for device token/permission lifecycle and notification callbacks.
+- Continue using `supabase_flutter` for auth/tenant context and token persistence RPC calls.
+
 ## 3.2 App lifecycle integration
 
 Wire in app bootstrap:
 
 - On authenticated session start:
   - request notification permission
-  - obtain current device token from native push SDK bridge
+  - initialize OneSignal SDK and obtain current device token/subscription ID
   - call repository registration
 - On token refresh event:
   - upsert latest token
@@ -272,16 +278,19 @@ Prepare later (future wave):
 - APNs Auth Key (`.p8`), `Key ID`, `Team ID`
 - iOS bundle push capability + deployment secrets for the iOS send path
 
-## 5.2 Android push provider credentials
+## 5.2 Android push provider credentials (OneSignal)
 
-- Create production push credentials for Android in the selected provider path used by Edge Function transport
-- Add required server credentials as Supabase Edge Function secrets
+- Create a OneSignal app for Schoolify and configure Android push in the OneSignal dashboard
+- Capture OneSignal **App ID** and **REST API Key**
+- Add required OneSignal credentials as Supabase Edge Function secrets
 - Define Android notification channel IDs/names used by app
 
 ## 5.3 Supabase environment and secrets
 
 - Ensure Edge Functions are enabled in the target project
-- Set push provider secrets in Supabase (`supabase secrets set ...`)
+- Set OneSignal secrets in Supabase (`supabase secrets set ...`) such as:
+  - `ONESIGNAL_APP_ID`
+  - `ONESIGNAL_REST_API_KEY`
 - Keep iOS secrets unset for this wave; iOS send path remains inactive
 - Set optional limits/config:
   - `PUSH_BATCH_SIZE`

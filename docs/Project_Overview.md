@@ -2,7 +2,7 @@
 
 **Purpose:** Quick orientation for anyone (including LLM agents) picking up work on this codebase. For depth, follow the linked docs—this file does not replace them.
 
-**Program status:** **Waves 1–4 complete** (foundations, dashboard, students/attendance/parent, grades/announcements/admin users). **Wave 5 in progress** — **messaging first, then Supabase push notifications**; **fees/payments deferred** pending payment-strategy decision ([team_task_board.md](team_task_board.md), [wave5_plan.md](wave5_plan.md)).
+**Program status:** **Waves 1–4 complete** (foundations, dashboard, students/attendance/parent, grades/announcements/admin users). **Wave 5 in progress** — **messaging first, then OneSignal push notifications via Supabase Edge Functions**; **fees/payments deferred** pending payment-strategy decision ([team_task_board.md](team_task_board.md), [wave5_plan.md](wave5_plan.md)).
 
 ---
 

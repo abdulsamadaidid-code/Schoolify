@@ -226,4 +226,4 @@ Map Postgres / PostgREST errors to user-safe messages; never expose raw SQL or i
 
 ## 12. Document maintenance
 
-Update this file when schema or RLS patterns change; keep `INTEGRATIONS_AND_SETUP.md` in sync for third-party steps (Stripe, Supabase push).
+Update this file when schema or RLS patterns change; keep `INTEGRATIONS_AND_SETUP.md` in sync for third-party steps (Stripe, OneSignal push via Edge Functions).

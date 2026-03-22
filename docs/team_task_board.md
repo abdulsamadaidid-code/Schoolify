@@ -15,7 +15,7 @@
 | **Wave 2** | Phase 1 — dashboard shell + KPI/schedule (mock or minimal real read) | **Done** |
 | **Wave 3** | Phase 2–4 — students → attendance → parent mobile | **Done** |
 | **Wave 4** | Grades writes, announcements E2E, admin user management | **Done** |
-| **Wave 5** | Messaging + Supabase push notifications; fees deferred | **In progress** |
+| **Wave 5** | Messaging + OneSignal push notifications via Edge Functions; fees deferred | **In progress** |
 
 **Wave 2 orchestration (archived):** [wave2_delegation.md](wave2_delegation.md) — **completed.**  
 **Wave 3 orchestration (archived):** [wave3_delegation.md](wave3_delegation.md).  
@@ -119,7 +119,7 @@ Delivered in **product phases** (sequential order):
 ### Wave 5 — Current execution scope (**active**)
 
 - Messaging between staff and parents (**Track C shipped**).
-- Supabase push notifications (**Track B active**).
+- OneSignal push notifications via Edge Functions (**Track B active**).
 - Fees/payments deferred until payment strategy is finalized.
 
 **Wave 5 decision lock (do not reopen without Lead approval):**
@@ -134,7 +134,7 @@ Delivered in **product phases** (sequential order):
 
 | Column | Typical items |
 |--------|----------------|
-| **Now** | Wave 5 — Supabase push integration (Track B) after Track C messaging ship |
+| **Now** | Wave 5 — OneSignal push integration (Track B) after Track C messaging ship |
 | **Next** | Fees/payments after provider decision (Stripe + local method) |
 | **Blocked** | Work requiring payment-method decision or explicit product scope changes |
 | **Done** | Waves 1–4 shipped; `analyze` green in CI/manual and no architecture drift |
