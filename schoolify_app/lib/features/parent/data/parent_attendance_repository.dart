@@ -63,7 +63,8 @@ class SupabaseParentAttendanceRepository implements ParentAttendanceRepository {
       final label = switch (status) {
         'present' => 'Present',
         'absent' => 'Absent',
-        'excused' => 'Excused',
+        'late' => 'Late',
+        'excused' => 'Excused', // legacy rows if any
         _ => status.isEmpty ? '—' : status,
       };
       return AttendanceDay(date: date, statusLabel: label);

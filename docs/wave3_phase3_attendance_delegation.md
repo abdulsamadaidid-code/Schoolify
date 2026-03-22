@@ -1,11 +1,11 @@
 # Phase 3 — Attendance writes & mark flow (delegation + agent prompts)
 
-**Status:** **Ready to execute** (depends on Phase 2 student rows existing for meaningful marks).  
+**Status:** **Completed** (implemented: `004` + `005`, teacher mark flow + `upsert_attendance_mark`; see [wave3_status.md](wave3_status.md)).  
 **Parent doc:** [wave3_delegation.md](wave3_delegation.md) · **Checklist:** [wave3_status.md](wave3_status.md).
 
-**Product intent:** Date-only attendance (no per-period duplicates for the same calendar day), **idempotent** marks (re-saving the same student/day updates rather than duplicating rows), P/A/L semantics mapped to DB `present` / `absent` / `excused` (see [team_task_board.md](team_task_board.md)).
+**Product intent:** Date-only attendance, **idempotent** marks, P/A/L mapped to DB `present` / `absent` / **`late`** (see [`005_attendance_late_status.sql`](../supabase/migrations/005_attendance_late_status.sql); `excused` removed from check).
 
-**Schema reference:** [`002_student_data.sql`](../supabase/migrations/002_student_data.sql) — table `public.attendance` (`school_id`, `student_id`, `date`, `status`).
+**Schema reference:** [`002_student_data.sql`](../supabase/migrations/002_student_data.sql) + [`004_attendance_writes.sql`](../supabase/migrations/004_attendance_writes.sql) + **`005`** (status enum).
 
 ---
 
