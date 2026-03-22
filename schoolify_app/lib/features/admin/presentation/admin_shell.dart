@@ -7,7 +7,7 @@ import 'package:schoolify_app/core/auth/auth_notifier.dart';
 import 'package:schoolify_app/core/auth/providers/auth_providers.dart';
 import 'package:schoolify_app/core/config/env.dart';
 
-/// Admin area: dashboard, students, messages (placeholder).
+/// Admin area: dashboard, students, announcements, people.
 class AdminShell extends ConsumerStatefulWidget {
   const AdminShell({super.key, required this.navigationShell});
 
@@ -69,9 +69,14 @@ class _AdminShellState extends ConsumerState<AdminShell> {
                       label: Text('Students'),
                     ),
                     NavigationRailDestination(
-                      icon: Icon(Icons.chat_bubble_outline),
-                      selectedIcon: Icon(Icons.chat_bubble),
-                      label: Text('Messages'),
+                      icon: Icon(Icons.campaign_outlined),
+                      selectedIcon: Icon(Icons.campaign),
+                      label: Text('Announcements'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.manage_accounts_outlined),
+                      selectedIcon: Icon(Icons.manage_accounts),
+                      label: Text('People'),
                     ),
                   ],
                 ),
@@ -110,9 +115,14 @@ class _AdminShellState extends ConsumerState<AdminShell> {
                 label: 'Students',
               ),
               NavigationDestination(
-                icon: Icon(Icons.chat_bubble_outline),
-                selectedIcon: Icon(Icons.chat_bubble),
-                label: 'Messages',
+                icon: Icon(Icons.campaign_outlined),
+                selectedIcon: Icon(Icons.campaign),
+                label: 'Announcements',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.manage_accounts_outlined),
+                selectedIcon: Icon(Icons.manage_accounts),
+                label: 'People',
               ),
             ],
           ),

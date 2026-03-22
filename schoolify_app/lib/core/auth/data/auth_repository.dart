@@ -54,6 +54,7 @@ class AuthRepository {
     await client.from('profiles').upsert({
       'id': user.id,
       'display_name': user.email ?? '',
+      'email': user.email,
     });
 
     final schoolIdRaw = await client.rpc<dynamic>('get_my_school_id');

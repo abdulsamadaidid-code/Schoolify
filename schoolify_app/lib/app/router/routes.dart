@@ -6,6 +6,8 @@ abstract final class AppRoutes {
   static const admin = '/admin';
   static const adminDashboard = '/admin/dashboard';
   static const adminStudents = '/admin/students';
+  static const adminAnnouncements = '/admin/announcements';
+  static const adminPeople = '/admin/people';
   static const teacher = '/teacher';
   static const parent = '/parent';
 }

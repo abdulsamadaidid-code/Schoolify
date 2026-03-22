@@ -11,8 +11,9 @@ import 'package:schoolify_app/features/auth/presentation/login_page.dart';
 import 'package:schoolify_app/features/auth/presentation/role_select_screen.dart';
 import 'package:schoolify_app/features/home/presentation/pending_role_page.dart';
 import 'package:schoolify_app/features/admin/presentation/admin_dashboard_screen.dart';
-import 'package:schoolify_app/features/admin/presentation/admin_messages_placeholder_screen.dart';
+import 'package:schoolify_app/features/admin/presentation/admin_announcements_screen.dart';
 import 'package:schoolify_app/features/admin/presentation/admin_shell.dart';
+import 'package:schoolify_app/features/admin/presentation/admin_users_screen.dart';
 import 'package:schoolify_app/features/students/presentation/students_list_screen.dart';
 import 'package:schoolify_app/features/home/presentation/splash_page.dart';
 import 'package:schoolify_app/features/parent/presentation/parent_announcements_screen.dart';
@@ -86,9 +87,17 @@ final routerProvider = Provider<GoRouter>((ref) {
               StatefulShellBranch(
                 routes: [
                   GoRoute(
-                    path: 'messages',
+                    path: 'announcements',
                     builder: (context, state) =>
-                        const AdminMessagesPlaceholderScreen(),
+                        const AdminAnnouncementsScreen(),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: 'people',
+                    builder: (context, state) => const AdminUsersScreen(),
                   ),
                 ],
               ),

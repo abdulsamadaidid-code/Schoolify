@@ -9,6 +9,12 @@ abstract class ParentStudentRepository {
   Future<List<String>> listLinkedStudentIds({required String schoolId});
 
   Future<List<ParentLinkedChild>> linkedChildren({required String schoolId});
+
+  Future<void> addParentLink({
+    required String schoolId,
+    required String studentId,
+    required String parentUserId,
+  });
 }
 
 /// Demo / offline — no Supabase client.
@@ -27,6 +33,13 @@ class StubParentStudentRepository implements ParentStudentRepository {
   Future<List<ParentLinkedChild>> linkedChildren({required String schoolId}) async {
     return List.from(_stubChildren);
   }
+
+  @override
+  Future<void> addParentLink({
+    required String schoolId,
+    required String studentId,
+    required String parentUserId,
+  }) async {}
 }
 
 class SupabaseParentStudentRepository implements ParentStudentRepository {
@@ -69,6 +82,22 @@ class SupabaseParentStudentRepository implements ParentStudentRepository {
     }
     out.sort((a, b) => a.displayName.compareTo(b.displayName));
     return out;
+  }
+
+  @override
+  Future<void> addParentLink({
+    required String schoolId,
+    required String studentId,
+    required String parentUserId,
+  }) async {
+    await _client.rpc<dynamic>(
+      'add_parent_link',
+      params: <String, dynamic>{
+        'school_id': schoolId,
+        'student_id': studentId,
+        'parent_user_id': parentUserId,
+      },
+    );
   }
 }
 

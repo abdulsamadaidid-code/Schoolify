@@ -40,38 +40,76 @@ class _AnnouncementList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       itemCount: items.length,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, i) {
         final a = items[i];
-        final posted =
-            '${a.postedAt.month}/${a.postedAt.day}/${a.postedAt.year.toString().substring(2)}';
-        return AppCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                a.title,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 18),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Posted $posted',
-                style: Theme.of(context).textTheme.labelLarge,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                a.body,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppColors.onSurfaceVariant,
-                    ),
-              ),
-            ],
+        final posted = _shortDate(a.postedAt);
+        return InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: () => _showAnnouncementDialog(context, a),
+          child: AppCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  a.title,
+                  style: theme.textTheme.titleLarge?.copyWith(fontSize: 18),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Posted $posted',
+                  style: theme.textTheme.labelLarge,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  a.body,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: AppColors.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
     );
   }
+}
+
+Future<void> _showAnnouncementDialog(BuildContext context, Announcement a) {
+  return showDialog<void>(
+    context: context,
+    builder: (context) {
+      final theme = Theme.of(context);
+      return AlertDialog(
+        title: Text(a.title),
+        content: SingleChildScrollView(
+          child: Text(
+            a.body,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: AppColors.onSurfaceVariant,
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+String _shortDate(DateTime dt) {
+  final local = dt.toLocal();
+  final yy = local.year.toString().substring(2);
+  return '${local.month}/${local.day}/$yy';
 }
