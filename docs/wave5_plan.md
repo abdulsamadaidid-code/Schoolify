@@ -3,7 +3,7 @@
 **Goal:** Deliver the deferred communication infrastructure after Waves 1-4:
 
 1. Messaging between staff and parents
-2. Push notifications (FCM)
+2. Push notifications (Supabase push via Edge Functions)
 
 **Scope change note:** Fees/payments are intentionally removed from Wave 5 and deferred to a future wave until payment strategy is decided (Stripe + local payment method).
 
@@ -23,7 +23,7 @@
 | Track | Primary owner agent | Supporting agents |
 |------|----------------------|-------------------|
 | Messaging | Feature: Messaging | Supabase/DB, Platform, Design system |
-| Push notifications (FCM) | Platform/Mobile infra | Supabase/DB, Feature agents, Auth & tenancy |
+| Push notifications (Supabase push) | Platform/Mobile infra | Supabase/DB, Feature agents, Auth & tenancy |
 
 ---
 
@@ -111,7 +111,7 @@ Repository behavior:
 
 ---
 
-## Track B — Push notifications (FCM)
+## Track B — Push notifications (Supabase push)
 
 ### What needs to be built
 
@@ -135,12 +135,12 @@ RLS:
 - Users can manage their own tokens only.
 - App users do not directly write delivery logs (service role/Edge only).
 
-#### B2) FCM send pipeline (Platform owner)
+#### B2) Supabase push send pipeline (Platform owner)
 
 Build/extend Edge Function:
 
 - `send_push_notifications`
-  - consumes `notification_events`, resolves tokens, sends via FCM HTTP v1/Admin SDK.
+  - reads `notification_events`, resolves `device_tokens`, and sends notifications from a Supabase Edge Function (provider-agnostic transport, no external push SDK dependency in app layer).
 
 Event producers (initial):
 
@@ -150,11 +150,10 @@ Event producers (initial):
 
 #### B3) Flutter app integration (Platform owner)
 
-Add packages and setup:
+Packages and setup:
 
-- `firebase_core`
-- `firebase_messaging`
-- optional `flutter_local_notifications`
+- Use `supabase_flutter` only for app-side token registration and event reads.
+- No separate client push package setup is required for this project plan.
 
 Create:
 
@@ -170,7 +169,7 @@ Wire initialization:
 ### Acceptance criteria
 
 - Authenticated users register/update push token successfully.
-- Triggered events create notification records and produce FCM send attempts.
+- Triggered events create notification records and produce Supabase push send attempts.
 - Foreground and background notification behavior works on at least one iOS and one Android device.
 - Token cleanup exists for invalid/unregistered tokens.
 
@@ -183,7 +182,7 @@ flowchart LR
   MsgDB[011 Messaging foundation]
   MsgUI[Messaging Flutter]
   PushDB[012 Push foundation]
-  PushSvc[FCM pipeline]
+  PushSvc[Supabase_push_pipeline]
 
   MsgDB --> MsgUI
   MsgUI --> PushSvc
@@ -193,7 +192,7 @@ flowchart LR
 Recommended execution order:
 
 1. Track C messaging DB (`011`) + core messaging UI/repository first.
-2. Track B push DB (`012`) + FCM infrastructure second.
+2. Track B push DB (`012`) + Supabase push infrastructure second.
 3. Connect push event producers from messaging first, then announcements/attendance.
 4. Final integration QA across roles/devices.
 
@@ -214,7 +213,7 @@ Recommended execution order:
 
 ### Platform / Mobile infra agent
 
-- Own FCM setup and notification infrastructure.
+- Own Supabase push setup and notification infrastructure.
 - Own Edge Function deployment docs and environment setup.
 
 ### Auth & tenancy agent
@@ -232,7 +231,7 @@ Recommended execution order:
 
 | Risk | Mitigation |
 |------|------------|
-| Token spam / stale FCM tokens | Add token freshness timestamps and invalid-token cleanup process. |
+| Token spam / stale device tokens | Add token freshness timestamps and invalid-token cleanup process. |
 | Messaging RLS regressions | Build role-matrix SQL tests (admin/teacher/parent in same and different schools). |
 | Feature overlap in router/shells | Serialize ownership for `router.dart` and each shell file. |
 | Push implementation before message schema stabilizes | Keep execution order strict: messaging first, then push wiring. |
@@ -252,7 +251,7 @@ Recommended execution order:
 ## Done definition for Wave 5
 
 - Messaging track: role-safe threads/messages shipped for admin, teacher, and parent.
-- Push track: FCM tokens stored and push delivery pipeline operational for at least message and announcement/attendance events.
+- Push track: `device_tokens` stored and Supabase Edge Function delivery pipeline operational for at least message and announcement/attendance events.
 - Messaging-first sequencing respected (push implemented only after messaging data model/repositories are in place).
 - Migrations and Edge Functions documented and repeatable for messaging and push.
 - `flutter analyze` and role-based smoke tests pass in Supabase-backed mode and stub mode.

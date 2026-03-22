@@ -32,9 +32,9 @@ This document inventories third-party services, Flutter packages, and developer 
 | State | Riverpod | Per project rules |
 | Backend | Supabase | Auth, Postgres (RLS), Storage, Realtime, Edge Functions |
 | Payments | Stripe | School subscriptions; optional fee collection |
-| Push | Firebase Cloud Messaging (FCM) | Standard Flutter path for iOS/Android |
+| Push | Supabase push via Edge Functions + `device_tokens` | Push pipeline owned in Supabase stack |
 | In-app messaging | Supabase Realtime (+ Postgres) | Threads/messages; presence optional later |
-| Optional | Sentry, PostHog or Firebase Analytics | Errors and product analytics (MVP-optional) |
+| Optional | Sentry, PostHog | Errors and product analytics (MVP-optional) |
 
 No application code lives in this document—only preparation and integration guidance.
 
@@ -60,7 +60,7 @@ flowchart LR
 
   subgraph external [External]
     Stripe[Stripe]
-    FCM[FCM]
+    PushProvider[Push provider/APNs+Android]
   end
 
   Web --> Auth
@@ -76,8 +76,8 @@ flowchart LR
   iOS --> Realtime
   Android --> Realtime
   Fn --> Stripe
-  iOS --> FCM
-  Android --> FCM
+  iOS --> PushProvider
+  Android --> PushProvider
 ```
 
 **Multi-tenancy (MVP):** enforce isolation with **Row Level Security (RLS)** on Postgres, keyed by `school_id` (or equivalent) derived from the authenticated user’s membership. JWT custom claims or a `profiles` / `school_users` join table are common patterns—design in schema work, not in this doc.
@@ -177,22 +177,22 @@ flowchart LR
 
 | Service | Purpose |
 |---------|---------|
-| **Firebase Cloud Messaging (FCM)** | Push tokens; works with Flutter |
+| **Supabase push pipeline** | Device tokens + notification events + Edge Function delivery |
 
-**Why:** Flutter’s well-trodden path; APNs on iOS is handled via FCM when configured correctly.
+**Why:** Keeps push in the same Supabase-first architecture (RLS-backed token storage, event-driven delivery, and Edge Functions for secure sends).
 
 **Installation (high level):**
 
-1. Create a **Firebase** project at [console.firebase.google.com](https://console.firebase.google.com).
-2. Add **iOS** and **Android** apps; download `GoogleService-Info.plist` (iOS) and `google-services.json` (Android).
-3. FlutterFire: `dart pub global activate flutterfire_cli` then `flutterfire configure` (select platforms and Firebase project).
+1. Create token tables in Supabase (`device_tokens`, `notification_events`, optional `notification_deliveries`) with tenant-aware access controls.
+2. Implement a Supabase Edge Function (for example `send_push_notifications`) that reads pending events, resolves user tokens, sends push, and records delivery outcome.
+3. Register/update device tokens from Flutter via `supabase_flutter` after auth and on token refresh.
 
-**Flutter packages:** `firebase_core`, `firebase_messaging`; optionally `flutter_local_notifications` for foreground display.
+**Flutter packages:** `supabase_flutter`; optionally `flutter_local_notifications` for foreground display.
 
 **Tips / caveats:**
 
-- **iOS:** Enable Push Notifications capability in Xcode; upload APNs key to Firebase.
-- **Android:** Default FCM setup; handle notification channels on modern Android.
+- **iOS:** Enable Push Notifications capability in Xcode; provide APNs credentials to your push delivery environment used by Edge Functions.
+- **Android:** Configure notification channels and provider credentials used by your Edge Function push sender.
 - **Web push** uses a different mechanism (VAPID, service worker)—scope separately if MVP includes web push.
 
 ---
@@ -202,7 +202,7 @@ flowchart LR
 | Tool | Purpose | MVP? |
 |------|---------|------|
 | **Sentry** (`sentry_flutter`) | Crash and error reporting, performance traces | Optional; highly useful pre-launch |
-| **PostHog** or **Firebase Analytics** | Product analytics, funnels | Optional |
+| **PostHog** | Product analytics, funnels | Optional |
 
 **Installation (Sentry example):**
 
@@ -276,12 +276,11 @@ Below: **purpose**, **install**, **configuration** at a high level. Adjust versi
 | `path` / `path_provider` | Paths and app dirs | `flutter pub add path path_provider` | — |
 | `file_picker` | Uploads to Storage | `flutter pub add file_picker` | Platform permissions |
 
-### 7.8 Firebase (push)
+### 7.8 Supabase push notifications
 
 | Package | Purpose | Install | Configuration |
 |---------|---------|---------|---------------|
-| `firebase_core` | Firebase init | `flutter pub add firebase_core` | FlutterFire configure |
-| `firebase_messaging` | FCM | `flutter pub add firebase_messaging` | iOS/Android setup |
+| `supabase_flutter` | Token registration + event-linked push workflow | `flutter pub add supabase_flutter` | URL + anon key at init |
 | `flutter_local_notifications` | Show notifications in foreground | `flutter pub add flutter_local_notifications` | — |
 
 ### 7.9 Optional monitoring
@@ -377,12 +376,12 @@ Below: **purpose**, **install**, **configuration** at a high level. Adjust versi
 2. Optionally install **Stripe CLI**: `brew install stripe/stripe-cli/stripe`
 3. Login: `stripe login`; forward webhooks: `stripe listen --forward-to <local-or-ngrok-edge-function-url>`
 
-### 9.10 Firebase (FCM)
+### 9.10 Supabase push setup
 
-1. Create Firebase project; register iOS/Android apps.
-2. Run `flutterfire configure` from the Flutter project root.
-3. Place config files in `ios/` and `android/` per FlutterFire output.
-4. Complete iOS push steps (capabilities, APNs key in Firebase).
+1. Apply push migrations for `device_tokens` and `notification_events`.
+2. Deploy the push Edge Function and set provider credentials as secrets.
+3. Wire Flutter token registration/update through `supabase_flutter`.
+4. Complete iOS push capability and Android notification channel setup.
 
 ### 9.11 Clone repo and first run
 

@@ -96,7 +96,7 @@ Teachers:
 
 ### 4.4 Device / push
 
-- **`device_tokens`**: `user_id`, `school_id` (optional if token is global), `fcm_token`, `platform`, `updated_at` — RLS so users only upsert their own rows.
+- **`device_tokens`**: `user_id`, `school_id` (optional if token is global), `token`, `platform`, `updated_at` — RLS so users only upsert their own rows.
 
 ---
 
@@ -226,4 +226,4 @@ Map Postgres / PostgREST errors to user-safe messages; never expose raw SQL or i
 
 ## 12. Document maintenance
 
-Update this file when schema or RLS patterns change; keep `INTEGRATIONS_AND_SETUP.md` in sync for third-party steps (Stripe, FCM).
+Update this file when schema or RLS patterns change; keep `INTEGRATIONS_AND_SETUP.md` in sync for third-party steps (Stripe, Supabase push).

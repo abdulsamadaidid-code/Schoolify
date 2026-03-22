@@ -26,7 +26,7 @@
 | Live Supabase reads/writes | Swap stub repository providers for implementations calling `Supabase.instance.client` + tenant filters. |
 | Fee payments (Stripe) | MVP shows **fees summary** only; charging flows per `docs/INTEGRATIONS_AND_SETUP.md`. |
 | Teacher “mark attendance” detail flow | MVP lists **today’s classes**; drill-down to mark P/A/L needs attendance schema + UX slice. |
-| Push / FCM | Not in this MVP slice. |
+| Push notifications | Not in this MVP slice. |
 
 ## Stitch references
 
