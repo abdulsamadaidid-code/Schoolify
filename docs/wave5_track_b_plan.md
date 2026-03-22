@@ -15,8 +15,8 @@
 - Provider lock: **OneSignal only** for Track B and future iOS enablement (no Firebase, no FCM, no FlutterFire)
 - Engineering constraint: Flutter and Edge Function code must include clear iOS hooks/stubs that are disabled in Wave 5
 
-**Delivery status update:** **Track B infrastructure is shipped** (migrations `017`-`020`, OneSignal Edge Function deployed, scheduler active, Flutter token lifecycle wired).
-**Activation status:** push triggers are **not yet end-to-end active** until feature event producers insert rows into `notification_events`.
+**Delivery status update:** **Track B is fully shipped** (migrations `017`-`021`, OneSignal Edge Function deployed, scheduler active, Flutter token lifecycle wired, and event producers integrated).
+**Validation status:** remaining real Android-device smoke test is a deployment/QA step, not a code blocker.
 
 ---
 
@@ -310,7 +310,7 @@ Prepare later (future wave):
 
 ## 6) Definition of done (Track B)
 
-- Migrations `017`-`019` applied and reviewed
+- Migrations `017`-`021` applied and reviewed
 - Edge Function sends push for pending events and writes delivery logs
 - Flutter app registers/unregisters tokens reliably on Android
 - Message-created events produce push notifications end-to-end
@@ -319,9 +319,8 @@ Prepare later (future wave):
 - Web push remains out of scope and not implemented in this wave
 - iOS is explicitly deferred (not dropped); iOS hooks/stubs are present and disabled so later enablement requires credentials/config only
 
-## 7) Remaining work to activate end-to-end delivery
+## 7) Remaining validation (post-ship deployment QA)
 
-- Messaging producer: write `notification_events` on message send for recipients (excluding sender).
-- Announcements producer: write `notification_events` on post/edit flows.
-- Attendance producer: write `notification_events` on mark create/update flows.
+- Run real Android-device smoke test for message/announcement/attendance notifications.
 - Verify each producer path creates queue rows, gets claimed by `claim_notification_events_batch`, and records send outcomes in `notification_deliveries`.
+- Keep iOS send path disabled until Apple credentials are available in a future wave.

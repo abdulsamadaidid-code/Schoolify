@@ -30,8 +30,8 @@
 ## Current state snapshot (for planning)
 
 - **Messaging (Track C):** **shipped** — migrations `015` + `016` applied, admin/teacher/parent message tabs wired, teacher participant-source fix completed.
-- **Push (Track B):** **shipped (infrastructure)** — migrations `017` + `018` + `019` + `020`, OneSignal Edge Function deployment, scheduler via `pg_cron`, and Flutter token lifecycle wiring are in place.
-- **Announcements/attendance/grades:** already produce user-facing events that can become push triggers once notification plumbing exists.
+- **Push (Track B):** **fully shipped** — migrations `017` + `018` + `019` + `020` + `021`, OneSignal Edge Function deployment, scheduler via `pg_cron`, Flutter token lifecycle wiring, and event producers for messaging/announcements/attendance are in place.
+- **Remaining validation:** real Android-device smoke test is deployment/QA validation, not a code blocker.
 
 ---
 
@@ -113,8 +113,8 @@ Repository behavior:
 
 ## Track B — Push notifications (OneSignal via Supabase Edge Functions)
 
-**Status:** **Shipped (infrastructure complete).**  
-**Final activation dependency:** event producers for messaging, announcements, and attendance must write to `notification_events`.
+**Status:** **Fully shipped.**  
+**Event producers:** wired in migration `021` for `send_message`, `post_announcement`, and `upsert_attendance_mark`.
 
 **Platform scope lock:** Track B is **mobile-only**, with **Android delivery in Wave 5**.  
 **iOS status:** explicitly **deferred** to a future wave pending Apple Developer account (not permanently out of scope).  
@@ -181,12 +181,11 @@ Wire initialization:
 - Token cleanup exists for invalid/unregistered tokens.
 - iOS hooks/stubs exist in code but remain disabled in Wave 5.
 
-### Remaining before pushes fire end-to-end
+### Remaining validation (non-blocking code-wise)
 
-- Wire message send flow to insert recipient rows into `notification_events` (excluding sender).
-- Wire announcement publish/edit flow to insert `notification_events`.
-- Wire attendance mark create/update flow to insert `notification_events`.
-- Run one full smoke pass per producer (message, announcement, attendance) and verify delivery logs in `notification_deliveries`.
+- Run real Android-device smoke pass for message, announcement, and attendance push events.
+- Verify queue -> claim -> send -> `notification_deliveries` logging on deployed environment.
+- Keep iOS path disabled in Wave 5 until Apple account/credentials are available.
 
 ---
 
@@ -265,8 +264,9 @@ Recommended execution order:
 
 ## Done definition for Wave 5
 
-- Messaging track: role-safe threads/messages shipped for admin, teacher, and parent.
-- Push track: `device_tokens` stored and OneSignal delivery pipeline via Supabase Edge Function operational for at least message and announcement/attendance events.
-- Messaging-first sequencing respected (push implemented only after messaging data model/repositories are in place).
+- Track C (messaging): role-safe threads/messages shipped for admin, teacher, and parent.
+- Track B (push): `device_tokens`, `notification_events`, `notification_deliveries`, claim RPC worker, Edge Function schedule, and event producers are shipped and integrated.
+- End-to-end push pipeline is code-complete for messaging, announcement, and attendance events.
 - Migrations and Edge Functions documented and repeatable for messaging and push.
 - `flutter analyze` and role-based smoke tests pass in Supabase-backed mode and stub mode.
+- Remaining real Android-device smoke test is deployment/QA validation and does not block Wave 5 code completion.

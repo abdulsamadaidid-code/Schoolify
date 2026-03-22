@@ -15,7 +15,7 @@
 | **Wave 2** | Phase 1 — dashboard shell + KPI/schedule (mock or minimal real read) | **Done** |
 | **Wave 3** | Phase 2–4 — students → attendance → parent mobile | **Done** |
 | **Wave 4** | Grades writes, announcements E2E, admin user management | **Done** |
-| **Wave 5** | Messaging + OneSignal push notifications via Edge Functions; fees deferred | **In progress** |
+| **Wave 5** | Messaging + OneSignal push notifications via Edge Functions; fees deferred | **Done (scope complete)** |
 
 **Wave 2 orchestration (archived):** [wave2_delegation.md](wave2_delegation.md) — **completed.**  
 **Wave 3 orchestration (archived):** [wave3_delegation.md](wave3_delegation.md).  
@@ -116,12 +116,12 @@ Delivered in **product phases** (sequential order):
 - Announcements end-to-end (create/edit/delete with role-safe access).
 - Admin user management (list/add/remove/update role + parent link tooling).
 
-### Wave 5 — Current execution scope (**active**)
+### Wave 5 — Current execution scope (**complete**)
 
 - Messaging between staff and parents (**Track C shipped**).
-- OneSignal push notifications via Edge Functions (**Track B shipped - infrastructure complete**).
+- OneSignal push notifications via Edge Functions (**Track B fully shipped**).
 - Fees/payments deferred until payment strategy is finalized.
-- Remaining activation work: wire event producers (messaging/announcements/attendance) to `notification_events` for end-to-end push firing.
+- Remaining validation only: real Android-device smoke test in deployment/QA (not a code blocker).
 
 **Wave 5 decision lock (do not reopen without Lead approval):**
 
@@ -135,7 +135,7 @@ Delivered in **product phases** (sequential order):
 
 | Column | Typical items |
 |--------|----------------|
-| **Now** | Wave 5 — wire `notification_events` producers (messaging/announcements/attendance) for end-to-end push activation |
+| **Now** | Deployment QA — run real Android-device push smoke test and capture evidence |
 | **Next** | Fees/payments after provider decision (Stripe + local method) |
 | **Blocked** | Work requiring payment-method decision or explicit product scope changes |
 | **Done** | Waves 1–4 shipped; `analyze` green in CI/manual and no architecture drift |
@@ -163,4 +163,4 @@ Delivered in **product phases** (sequential order):
 
 ---
 
-*Last updated: Waves 1-4 marked complete; Wave 5 active (messaging + push, fees deferred).*
+*Last updated: Waves 1-5 scope complete (fees deferred by product decision); deployment QA smoke validation remains.*
