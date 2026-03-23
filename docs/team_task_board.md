@@ -15,7 +15,11 @@
 | **Wave 2** | Phase 1 — dashboard shell + KPI/schedule (mock or minimal real read) | **Done** |
 | **Wave 3** | Phase 2–4 — students → attendance → parent mobile | **Done** |
 | **Wave 4** | Grades writes, announcements E2E, admin user management | **Done** |
-| **Wave 5** | Messaging + OneSignal push notifications via Edge Functions; fees deferred | **Done (scope complete)** |
+| **Wave 5** | Messaging + OneSignal push notifications via Edge Functions | **Done** |
+| **Wave 6** | Android app + mobile polish (device runs, package name, OneSignal Android wiring, APK, UI polish) | **Active next** |
+| **Wave 7** | Reporting & analytics (attendance trends, grade averages, fee collection rates) | **Planned** |
+| **Wave 8** | UI/UX improvement pass across all roles | **Planned** |
+| **Wave 9** | Launch prep (onboarding, multi-school, performance, store submission) | **Planned** |
 
 **Wave 2 orchestration (archived):** [wave2_delegation.md](wave2_delegation.md) — **completed.**  
 **Wave 3 orchestration (archived):** [wave3_delegation.md](wave3_delegation.md).  
@@ -120,7 +124,6 @@ Delivered in **product phases** (sequential order):
 
 - Messaging between staff and parents (**Track C shipped**).
 - OneSignal push notifications via Edge Functions (**Track B fully shipped**).
-- Fees/payments deferred until payment strategy is finalized.
 - Remaining validation only: real Android-device smoke test in deployment/QA (not a code blocker).
 
 **Wave 5 decision lock (do not reopen without Lead approval):**
@@ -131,14 +134,34 @@ Delivered in **product phases** (sequential order):
 
 ---
 
+### Wave 6 — Current execution scope (**active next**)
+
+- Get Flutter app running on real Android devices.
+- Ensure Android project/package setup is finalized.
+- Confirm OneSignal Android wiring works on device.
+- Produce APK builds and resolve mobile UI issues across roles.
+
+### Waves 7-9 — Planned
+
+- **Wave 7:** reporting and analytics dashboards with real data.
+- **Wave 8:** dedicated UI/UX quality pass before launch.
+- **Wave 9:** launch prep (onboarding, multi-school support, performance, store submissions).
+
+### Permanently deferred (until further notice)
+
+- Fees/payments (Stripe + local method) — payment strategy not decided.
+- iOS push notifications — pending Apple Developer account; code stubs remain in place.
+
+---
+
 ## Kanban columns (operational)
 
 | Column | Typical items |
 |--------|----------------|
-| **Now** | Deployment QA — run real Android-device push smoke test and capture evidence |
-| **Next** | Fees/payments after provider decision (Stripe + local method) |
-| **Blocked** | Work requiring payment-method decision or explicit product scope changes |
-| **Done** | Waves 1–4 shipped; `analyze` green in CI/manual and no architecture drift |
+| **Now** | Wave 6 — Android app + mobile polish (device run, APK, UI fixes) |
+| **Next** | Wave 7 — reporting & analytics groundwork |
+| **Blocked** | Deferred scope: fees/payments and iOS push pending product/account decisions |
+| **Done** | Waves 1–5 shipped; `analyze` green in CI/manual and no architecture drift |
 
 ---
 
@@ -163,4 +186,4 @@ Delivered in **product phases** (sequential order):
 
 ---
 
-*Last updated: Waves 1-5 scope complete (fees deferred by product decision); deployment QA smoke validation remains.*
+*Last updated: Wave 6 is active next; Waves 7-9 planned; fees/payments and iOS push deferred until further notice.*

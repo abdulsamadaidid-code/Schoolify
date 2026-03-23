@@ -2,7 +2,7 @@
 
 **Purpose:** Quick orientation for anyone (including LLM agents) picking up work on this codebase. For depth, follow the linked docs—this file does not replace them.
 
-**Program status:** **Waves 1–4 complete** (foundations, dashboard, students/attendance/parent, grades/announcements/admin users). **Wave 5 in progress** — **messaging first, then OneSignal push notifications via Supabase Edge Functions**; **fees/payments deferred** pending payment-strategy decision ([team_task_board.md](team_task_board.md), [wave5_plan.md](wave5_plan.md)).
+**Program status:** **Waves 1-5 complete** (foundations through messaging + OneSignal push). **Active next: Wave 6** (Android app + mobile polish). **Waves 7-9 planned** (reporting/analytics, UI/UX pass, launch prep). **Deferred until further notice:** fees/payments and iOS push notifications ([team_task_board.md](team_task_board.md), [wave5_plan.md](wave5_plan.md)).
 
 ---
 
@@ -81,17 +81,17 @@ Without credentials, the app can run in a **demo / offline** mode (see [`schooli
 
 ---
 
-## MVP delivery order (high level)
+## MVP delivery roadmap (high level)
 
 Aligned with [team_task_board.md](team_task_board.md):
 
-1. **Foundations** — tenant schema + RLS baseline, auth + `school_id` / role context, theme aligned with branding, router guards  
-2. **Phase 1** — dashboard shell + mock or minimal real reads  
-3. **Phase 2** — students (directory, CRUD, enrollment)  
-4. **Phase 3** — attendance (date-only sessions, consistent marking rules, history/summary)  
-5. **Phase 4** — parent mobile flows with tenant isolation  
+1. **Wave 1-5 (done):** foundations, dashboard, students/attendance/parent, grades/announcements/admin, messaging + OneSignal push  
+2. **Wave 6 (active next):** Android app + mobile polish (real devices, package setup, OneSignal Android, APKs, UI fixes)  
+3. **Wave 7 (planned):** reporting and analytics dashboards with real school data  
+4. **Wave 8 (planned):** full UI/UX quality pass across all roles  
+5. **Wave 9 (planned):** launch prep (onboarding, multi-school support, performance tuning, store submission)
 
-Later: grades, fees, messaging per product scope, with role-scoped policies.
+Deferred until further notice: fees/payments and iOS push notifications.
 
 ---
 
