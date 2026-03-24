@@ -1,6 +1,6 @@
 # Design system (Flutter)
 
-**Authority:** [branding.md](branding.md) — Stitch exports under `Stitch UI/` are **visual reference only** (see [.cursor/rules/stitch-ui.mdc](../.cursor/rules/stitch-ui.mdc)).
+**Authority:** [branding.md](branding.md) for implementation tokens + [design.md](design.md) for detailed component and interaction specs — Stitch exports under `Stitch UI/` are **visual reference only** (see [.cursor/rules/stitch-ui.mdc](../.cursor/rules/stitch-ui.mdc)).
 
 **Code location:** [`schoolify_app/lib/core/theme/`](../schoolify_app/lib/core/theme/), [`schoolify_app/lib/core/design_system/`](../schoolify_app/lib/core/design_system/), [`schoolify_app/lib/core/ui/`](../schoolify_app/lib/core/ui/) (canonical Flutter package root is **`schoolify_app/`** only).
 
@@ -37,7 +37,7 @@
 4. **Platform / entrypoint** — Production entry is `schoolify_app/lib/main.dart` → `bootstrap()` → `SchoolifyApp` + router. Use the gallery only for local QA (optional route), not as `home`.
 5. **Riverpod** — Not wired in the design package; features should obtain `school_id` and async state in providers, not in these primitives.
 6. **Accessibility** — Large tap targets (56px fields, 56px default primary button), external labels, semantic empty state. Prefer `SelectableText` for dense read-only data on web/desktop in feature screens (see theming skill).
-7. **Glass nav / blur** — Stitch mentions glassmorphism for mobile nav/FAB; `SchoolifyNavigationBar` is a standard M3 bar for now. Add blur + opacity in the shell if product wants parity with Stitch.
+7. **Glass nav / blur** — Stitch specifies glassmorphism for mobile bottom nav/FAB, but `SchoolifyNavigationBar` is currently a standard M3 bar. Track this as a **Wave 8 UI/UX improvement task**: add bottom-nav blur + opacity treatment in shell-level mobile navigation.
 
 ---
 

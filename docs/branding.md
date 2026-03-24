@@ -1,5 +1,7 @@
 Brand Name: (Schoolify)
 
+Detailed component and interaction specs: see [design.md](design.md).
+
 Design Principles:
 - Clean, minimal, modern SaaS UI
 - Focus on clarity over decoration
@@ -16,7 +18,8 @@ Colors:
 - Surface Container Low (page sections / sidebar tier, light): #f3f3f4
 - Surface Container Lowest (elevated cards, light): #ffffff
 - Accent (curated highlights, e.g. emphasis tags): #ffb786
-- Success: #10b981
+- Success (light): #15803d
+- Success (dark): #22c55e
 - Warning: #f59e0b
 - Error: #ef4444
 - Outline Variant (ghost borders, light): #c3c6d7
